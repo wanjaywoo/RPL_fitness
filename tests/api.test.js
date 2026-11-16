@@ -166,7 +166,48 @@ describe('API FitStreak (Auth, Check-in, Dashboard, Admin)', () => {
     expect(data.macroTargets).toBeDefined();
   });
 
-  // 6. Aturan Admin (BR-13: Menolak data kesehatan 403 Forbidden)
+  // 6. Profil dan Target Kebugaran (TC-23 & TC-24, BR-01..BR-03, BR-09)
+  test('GET /api/goals/active - TC-23: Mengembalikan target aktif, BMR, TDEE, dan alokasi makronutrisi', async () => {
+    const res = await fetch(`${baseUrl}/api/goals/active`, {
+      headers: { 'Authorization': `Bearer ${authToken}` }
+    });
+
+    const data = await res.json();
+    expect(res.status).toBe(200);
+    expect(data.goal).toBeDefined();
+    expect(data.macros).toBeDefined();
+    expect(data.metrics).toBeDefined();
+    expect(data.metrics.bmr).toBeGreaterThan(1000);
+    expect(data.metrics.tdee).toBeGreaterThan(data.metrics.bmr);
+    expect(data.macros.protein_grams).toBeGreaterThanOrEqual(100);
+  });
+
+  test('POST /api/goals - TC-24: Memperbarui sasaran program dan menegakkan batas keselamatan server (BR-09)', async () => {
+    const res = await fetch(`${baseUrl}/api/goals`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authToken}`
+      },
+      body: JSON.stringify({
+        goalType: 'cutting',
+        activityLevel: 'moderate',
+        workoutDaysPerWeek: 5
+      })
+    });
+
+    const data = await res.json();
+    expect(res.status).toBe(200);
+    expect(data.goal.goal_type).toBe('cutting');
+    expect(data.goal.workout_days_per_week).toBe(5);
+    // Target kalori cutting tidak boleh di bawah BMR atau batas absolut 1500 kkal
+    expect(data.goal.target_calories).toBeGreaterThanOrEqual(1500);
+    expect(data.macros.protein).toBeGreaterThan(0);
+    expect(data.macros.fat).toBeGreaterThan(0);
+    expect(data.macros.carbs).toBeGreaterThan(0);
+  });
+
+  // 7. Aturan Admin (BR-13: Menolak data kesehatan 403 Forbidden)
   test('GET /api/admin/users/:id/health-data - Menolak akses data kesehatan untuk admin (403 Forbidden)', async () => {
     // Buat akun admin sementara
     const adminUser = db.prepare(`

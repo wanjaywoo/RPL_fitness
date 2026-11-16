@@ -133,8 +133,8 @@ npm run test:coverage
 
 ### Hasil Nyata Pengujian (100% Lulus / Hijau):
 - **Test Suites**: 10 passed, 10 total
-- **Tests**: 39 passed, 39 total
-- **Lines Coverage**: **74.34%** (Melampaui target syarat $\ge 65\%$)
+- **Tests**: 41 passed, 41 total (Mencakup 100% dari TC-01 s/d TC-26)
+- **Lines Coverage**: **73.51%** (Melampaui target syarat $\ge 65\%$)
 
 | Berkas Pengujian | Skenario Uji | Status |
 |---|---|---|
@@ -145,9 +145,39 @@ npm run test:coverage
 | `tests/streak.test.js` | TC-14..TC-18: Validasi Durasi 10-300 Menit, Hari Istirahat Netral, Toleransi Bolos, Skor | ✅ LULUS |
 | `tests/time.test.js` | TC-19..TC-20: Waktu UTC ke Lokal Asia/Jakarta & Awal Minggu Senin | ✅ LULUS |
 | `tests/reminder.test.js` | TC-21..TC-22: Evaluasi Pengingat Harian (Jam Pengguna, Hari Terjadwal, Belum Checkin) | ✅ LULUS |
+| `tests/api.test.js` | TC-23..TC-24: Profil & Target BR-09, FR-01..03, Dashboard Agregasi, & Admin 403 (BR-13) | ✅ LULUS |
 | `tests/recommendation.test.js` | TC-25..TC-26: Rekomendasi Split (Full Body/Upper-Lower/PPL) & Deteksi Otot Tertinggal | ✅ LULUS |
-| `tests/api.test.js` | FR-01..03, Dashboard Agregasi, & Penolakan Akses Medis Admin HTTP 403 (BR-13) | ✅ LULUS |
 | `tests/pwa.test.js` | NFR-07: Validitas Manifest PWA, Service Worker Cache, & Generator SVG Otot Orisinal | ✅ LULUS |
+
+#### Matriks Pemetaan Seluruh Test Case (TC-01 s/d TC-26):
+| No. TC | Deskripsi Uji | Aturan / Acuan | Hasil Nyata |
+|---|---|---|---|
+| **TC-01** | BMR laki-laki Mifflin-St Jeor ($10W + 6.25H - 5A + 5$) | BR-01 | ✅ LULUS |
+| **TC-02** | BMR perempuan Mifflin-St Jeor ($... - 161$) | BR-01 | ✅ LULUS |
+| **TC-03** | Penolakan pendaftaran usia $< 18$ tahun | BR-09 | ✅ LULUS |
+| **TC-04** | Perhitungan TDEE dengan pengali aktivitas (1.2 s/d 1.9) | BR-01 | ✅ LULUS |
+| **TC-05** | Target kalori Bulking ($\text{TDEE} + 300\text{ kkal}$) & batas surplus | BR-02, BR-03 | ✅ LULUS |
+| **TC-06** | Makro Bulking: Protein 1.8 g/kg, Lemak 25% | BR-10 | ✅ LULUS |
+| **TC-07** | Makro Cutting: Protein 2.0 g/kg, Lemak 25% | BR-10 | ✅ LULUS |
+| **TC-08** | Penegakan batas minimum lemak $0.6\text{ g/kg}$ berat badan | BR-10 | ✅ LULUS |
+| **TC-09** | Penurunan protein ke 1.6 g/kg jika karbohidrat $< 100\text{ g}$ | BR-11 | ✅ LULUS |
+| **TC-10** | Laju kenaikan berat badan mingguan (regresi linier) | BR-12 | ✅ LULUS |
+| **TC-11** | Slope 0 saat berat badan konstan | BR-12 | ✅ LULUS |
+| **TC-12** | Penolakan evaluasi adaptif jika data $< 4$ berat atau $< 10$ nutrisi | BR-12 | ✅ LULUS |
+| **TC-13** | Pembatasan saran penyesuaian kalori maksimal $\pm 150\text{ kkal}$ | BR-12 | ✅ LULUS |
+| **TC-14** | Validasi durasi check-in olahraga (10 s/d 300 menit) | BR-04 | ✅ LULUS |
+| **TC-15** | Hari istirahat netral dan tidak memutus streak | BR-05 | ✅ LULUS |
+| **TC-16** | Toleransi 1 hari latihan terlewat per minggu kalender | BR-05 | ✅ LULUS |
+| **TC-17** | Hari terlewat kedua dalam minggu yang sama mereset streak | BR-08 | ✅ LULUS |
+| **TC-18** | Perhitungan skor konsistensi persentase | BR-06 | ✅ LULUS |
+| **TC-19** | Konversi timestamp UTC ke tanggal lokal zona pengguna | BR-05 | ✅ LULUS |
+| **TC-20** | Penentuan awal minggu kalender adalah hari Senin | BR-05 | ✅ LULUS |
+| **TC-21** | Pengiriman pengingat pada hari terjadwal saat belum check-in | BR-07 | ✅ LULUS |
+| **TC-22** | Penolakan pengingat pada hari istirahat atau sudah check-in | BR-07 | ✅ LULUS |
+| **TC-23** | Pengambilan target aktif, BMR, TDEE, dan makro di server | FR-04, BR-01 | ✅ LULUS |
+| **TC-24** | Pembaruan target dan validasi batas keselamatan server | BR-09 | ✅ LULUS |
+| **TC-25** | Rekomendasi split (Full Body / Upper-Lower / PPL) | BR-14 | ✅ LULUS |
+| **TC-26** | Deteksi otot tertinggal (7 hari tanpa latihan, maks 3 gerakan) | BR-15 | ✅ LULUS |
 
 ---
 

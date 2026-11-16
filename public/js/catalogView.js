@@ -29,11 +29,23 @@ const CatalogView = {
       </button>
     `).join('');
 
-    // Pisahkan kekuatan dan kardio
-    const strengthExercises = exercises.filter(e => !e.is_cardio);
-    const cardioExercises = exercises.filter(e => e.is_cardio);
+    // Simpan cache kardio saat ada data
+    if (exercises.some(e => e.is_cardio)) {
+      this.cardioCache = exercises.filter(e => e.is_cardio);
+    }
 
-    const cardsHtml = strengthExercises.map(ex => {
+    // Jika filter Kardio dipilih, tampilkan kartu kardio di dalam grid!
+    // Jika Semua dipilih, tampilkan latihan beban di grid dan kardio di bagian bawah (sesuai mockup).
+    let gridExercises = [];
+    if (this.currentCategory === 'Kardio') {
+      gridExercises = exercises;
+    } else if (this.currentCategory === 'Semua') {
+      gridExercises = exercises.filter(e => !e.is_cardio);
+    } else {
+      gridExercises = exercises;
+    }
+
+    const cardsHtml = gridExercises.map(ex => {
       const primaryList = ex.primary_muscles ? ex.primary_muscles.split(', ') : [];
       const secondaryList = ex.secondary_muscles ? ex.secondary_muscles.split(', ') : [];
 
@@ -59,6 +71,15 @@ const CatalogView = {
         </div>
       `;
     }).join('');
+
+    const cardioList = this.cardioCache || [
+      { id: 19, name: 'Lari' },
+      { id: 20, name: 'Bersepeda' },
+      { id: 21, name: 'Renang' },
+      { id: 22, name: 'Jalan cepat' },
+      { id: 23, name: 'HIIT' },
+      { id: 24, name: 'Lompat tali' }
+    ];
 
     container.innerHTML = `
       <!-- Header Pilih Gerakan Sesuai Tampilan 4 -->
@@ -88,13 +109,14 @@ const CatalogView = {
       <div class="card" style="margin-top: 10px;">
         <h3 class="card-title">Gerakan kardio</h3>
         <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 16px;">
-          Lari, bersepeda, renang, jalan cepat, HIIT, dan lompat tali dicatat sebagai durasi (dan jarak jika ada).
+          Lari, bersepeda, renang, jalan cepat, HIIT, dan lompat tali dicatat sebagai durasi (dan jarak jika ada). Klik untuk melihat detail cara melakukannya.
         </p>
-        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-          ${cardioExercises.map(c => `
-            <a href="#/exercises/${c.id}" style="background: #f1f5f9; padding: 7px 18px; border-radius: 9999px; font-size: 0.88rem; font-weight: 500; color: var(--text-main); text-decoration: none; transition: background 0.15s;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">
-              ${c.name}
-            </a>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+          ${cardioList.map(c => `
+            <button type="button" class="cardio-pill-btn" data-id="${c.id}" style="background: #ffffff; border: 1.5px solid var(--border-color); padding: 9px 20px; border-radius: 9999px; font-size: 0.92rem; font-weight: 600; color: var(--text-main); cursor: pointer; display: inline-flex; align-items: center; gap: 8px; box-shadow: var(--shadow-sm); transition: all 0.15s ease;">
+              <span>🏃</span>
+              <span>${c.name}</span>
+            </button>
           `).join('')}
         </div>
       </div>
@@ -103,11 +125,33 @@ const CatalogView = {
     // Pasang listener klik pada kartu gerakan untuk langsung membuka Tampilan Kelima
     container.querySelectorAll('.exercise-card').forEach(card => {
       card.addEventListener('click', (e) => {
-        // Jangan timpa jika pengguna mengklik tautan tombol secara spesifik
         const id = card.getAttribute('data-id');
         if (id) {
           window.location.hash = `#/exercises/${id}`;
         }
+      });
+    });
+
+    // Pasang listener klik pada tombol pil kardio di bawah
+    container.querySelectorAll('.cardio-pill-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const id = btn.getAttribute('data-id');
+        if (id) {
+          window.location.hash = `#/exercises/${id}`;
+        }
+      });
+      btn.addEventListener('mouseenter', () => {
+        btn.style.borderColor = 'var(--primary-green)';
+        btn.style.color = 'var(--primary-green)';
+        btn.style.transform = 'translateY(-2px)';
+        btn.style.boxShadow = 'var(--shadow-md)';
+      });
+      btn.addEventListener('mouseleave', () => {
+        btn.style.borderColor = 'var(--border-color)';
+        btn.style.color = 'var(--text-main)';
+        btn.style.transform = 'none';
+        btn.style.boxShadow = 'var(--shadow-sm)';
       });
     });
 

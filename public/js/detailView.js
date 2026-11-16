@@ -126,12 +126,12 @@ const DetailView = {
                 <div style="font-size: 1.4rem; font-weight: 700; color: var(--text-main);">${exercise.default_sets}</div>
               </div>
               <div style="background: #f8fafc; padding: 12px 14px; border-radius: var(--radius-md);">
-                <div style="font-size: 0.8rem; color: var(--text-muted);">Repetisi</div>
+                <div style="font-size: 0.8rem; color: var(--text-muted);">${exercise.is_cardio ? 'Durasi' : 'Repetisi'}</div>
                 <div style="font-size: 1.4rem; font-weight: 700; color: var(--text-main);">${exercise.default_reps}</div>
               </div>
               <div style="background: #f8fafc; padding: 12px 14px; border-radius: var(--radius-md);">
                 <div style="font-size: 0.8rem; color: var(--text-muted);">Istirahat</div>
-                <div style="font-size: 1.4rem; font-weight: 700; color: var(--text-main);">${exercise.rest_seconds} dtk</div>
+                <div style="font-size: 1.4rem; font-weight: 700; color: var(--text-main);">${exercise.rest_seconds || 0} dtk</div>
               </div>
             </div>
 

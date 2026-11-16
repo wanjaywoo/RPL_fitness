@@ -156,4 +156,47 @@ router.get('/status-today', (req, res) => {
   });
 });
 
+// GET /api/checkins/history: Mengambil riwayat lengkap check-in, nutrisi, dan berat badan
+router.get('/history', (req, res) => {
+  const db = require('../db/connection');
+  const userId = req.user.id;
+
+  // 1. Riwayat checkin latihan
+  const workoutsStmt = db.prepare(`
+    SELECT w.*, c.is_valid,
+      (SELECT GROUP_CONCAT(exercise_name || ' (' || sets || 'x' || reps || ')', ', ') 
+       FROM workout_exercises WHERE workout_id = w.id) as exercises_summary
+    FROM workouts w
+    LEFT JOIN checkins c ON (w.user_id = c.user_id AND w.logged_date = c.checkin_date)
+    WHERE w.user_id = ?
+    ORDER BY w.logged_date DESC, w.id DESC
+    LIMIT 30
+  `);
+  const workouts = workoutsStmt.all(userId);
+
+  // 2. Riwayat nutrisi
+  const nutritionStmt = db.prepare(`
+    SELECT * FROM nutrition_logs
+    WHERE user_id = ?
+    ORDER BY logged_date DESC, id DESC
+    LIMIT 30
+  `);
+  const nutrition = nutritionStmt.all(userId);
+
+  // 3. Riwayat timbangan berat badan
+  const weightStmt = db.prepare(`
+    SELECT * FROM weight_logs
+    WHERE user_id = ?
+    ORDER BY logged_date DESC, id DESC
+    LIMIT 30
+  `);
+  const weights = weightStmt.all(userId);
+
+  res.json({
+    workouts,
+    nutrition,
+    weights
+  });
+});
+
 module.exports = router;

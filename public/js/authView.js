@@ -159,9 +159,17 @@ const AuthView = {
 
               <div id="login-error" style="color: #b91c1c; font-size: 0.9rem; margin-bottom: 16px; display: none;"></div>
 
-              <button type="submit" class="btn btn-primary btn-block" style="padding: 12px; font-size: 1rem;">
+              <button type="submit" class="btn btn-primary btn-block" style="padding: 12px; font-size: 1rem; margin-bottom: 14px;">
                 Masuk
               </button>
+
+              <!-- Tombol Masuk Cepat untuk Pengujian / Demo -->
+              <div style="background-color: #f8fafc; border: 1px dashed var(--border-color); border-radius: var(--radius-md); padding: 14px; text-align: center; margin-top: 16px;">
+                <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 8px;">Uji Coba Cepat (Akun Demo Mahasiswa/Dosen):</p>
+                <button type="button" id="btn-quick-login" class="btn btn-outline btn-sm btn-block" style="border-color: var(--primary-green); color: var(--primary-green); font-weight: 600;">
+                  🚀 Masuk Cepat sebagai Rizwan
+                </button>
+              </div>
             </form>
           </div>
 
@@ -171,6 +179,40 @@ const AuthView = {
         </main>
       </div>
     `;
+
+    // Tombol Masuk Cepat
+    const btnQuick = document.getElementById('btn-quick-login');
+    if (btnQuick) {
+      btnQuick.addEventListener('click', async () => {
+        const errBox = document.getElementById('login-error');
+        errBox.style.display = 'none';
+        try {
+          // Coba login dengan akun demo
+          try {
+            await API.login('nama@email.com', 'password123');
+            window.location.hash = '#/dashboard';
+          } catch (loginErr) {
+            // Jika akun belum dibuat di DB, daftarkan otomatis lalu login
+            await API.register({
+              name: 'Rizwan Defriansyah',
+              email: 'nama@email.com',
+              password: 'password123',
+              gender: 'male',
+              birthDate: '2000-05-14',
+              timeZone: 'Asia/Jakarta',
+              heightCm: 170,
+              weightKg: 69,
+              activityLevel: 'light',
+              goalType: 'bulking'
+            });
+            window.location.hash = '#/dashboard';
+          }
+        } catch (err) {
+          errBox.textContent = err.message;
+          errBox.style.display = 'block';
+        }
+      });
+    }
 
     document.getElementById('login-form').addEventListener('submit', async (e) => {
       e.preventDefault();

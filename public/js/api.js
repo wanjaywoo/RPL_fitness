@@ -99,6 +99,22 @@ const API = {
     return this.request('/api/checkins/status-today');
   },
 
+  // Riwayat Lengkap (Check-in, Nutrisi, Berat Badan)
+  async getHistory() {
+    return this.request('/api/checkins/history');
+  },
+
+  // Pengingat Harian (BR-07)
+  async getReminderStatus() {
+    return this.request('/api/profile/reminder');
+  },
+
+  async testReminderNotification() {
+    return this.request('/api/profile/reminder/test', {
+      method: 'POST'
+    });
+  },
+
   // Katalog Gerakan
   async getExercises(category = '', search = '') {
     let url = '/api/exercises';

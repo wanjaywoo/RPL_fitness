@@ -18,6 +18,8 @@ const STATIC_ASSETS = [
   '/js/catalogView.js',
   '/js/detailView.js',
   '/js/routinesView.js',
+  '/js/historyView.js',
+  '/js/reminderView.js',
   '/js/svgMuscle.js',
   '/icons/icon.svg'
 ];

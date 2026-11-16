@@ -52,4 +52,49 @@ router.put('/', (req, res, next) => {
   }
 });
 
+// GET /api/profile/reminder: Mendapatkan preferensi pengingat & status evaluasi hari ini (BR-07)
+router.get('/reminder', (req, res) => {
+  const goalRepository = require('../repositories/goalRepository');
+  const checkinRepository = require('../repositories/checkinRepository');
+  const { getLocalDateString, getDayOfWeek } = require('../utils/time');
+  const reminderService = require('../services/reminderService');
+
+  const user = userRepository.findById(req.user.id);
+  const todayDate = getLocalDateString(new Date(), user.time_zone);
+  const dayOfWeek = getDayOfWeek(todayDate, user.time_zone);
+
+  const goal = goalRepository.findActiveByUserId(user.id);
+  const scheduledDays = goal && goal.workout_days_per_week === 5 ? [1, 2, 3, 4, 5] : [1, 2, 4, 5];
+  const isScheduledDay = scheduledDays.includes(dayOfWeek);
+  const hasCheckedIn = checkinRepository.hasCheckinOnDate(user.id, todayDate);
+
+  const shouldRemind = reminderService.shouldSendReminder({ isScheduledDay, hasCheckedIn });
+
+  res.json({
+    reminderHour: 19, // Bawaan 19:00 sesuai mockup tampilan kedua
+    timeZone: user.time_zone,
+    todayDate,
+    dayOfWeek,
+    isScheduledDay,
+    hasCheckedIn,
+    shouldRemind,
+    statusText: hasCheckedIn 
+      ? 'Sudah check-in hari ini (Pengingat tidak aktif)' 
+      : !isScheduledDay 
+        ? 'Hari ini adalah hari istirahat netral (Pengingat tidak dikirim)' 
+        : 'Hari ini terjadwal latihan (Pengingat aktif pukul 19:00 WIB)'
+  });
+});
+
+// POST /api/profile/reminder/test: Simulasi pengujian notifikasi pengingat
+router.post('/reminder/test', (req, res) => {
+  const user = userRepository.findById(req.user.id);
+  res.json({
+    success: true,
+    title: '🔥 FitStreak - Waktunya Latihan!',
+    body: `Halo ${user.name}, ini pengingat harianmu. Jaga konsistensi dan streak latihanmu hari ini!`,
+    timestamp: new Date().toISOString()
+  });
+});
+
 module.exports = router;

@@ -61,7 +61,7 @@ const RoutinesView = {
           <div>
             <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin-bottom: 2px;">${ex.name}</h4>
             <p style="font-size: 0.8rem; color: var(--text-muted);">
-              ${ex.default_sets} set x ${ex.default_reps} repetisi · istirahat ${ex.rest_seconds} dtk
+              ${ex.is_cardio ? `${ex.default_sets} sesi · ${ex.default_reps} · Latihan Kardio` : `${ex.default_sets} set x ${ex.default_reps} repetisi · istirahat ${ex.rest_seconds} dtk`}
             </p>
           </div>
           <div class="routine-controls">

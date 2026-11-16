@@ -109,12 +109,17 @@ router.post('/:id/exercises', (req, res) => {
     return res.status(400).json({ error: 'exerciseId wajib diisi' });
   }
 
+  const exercise = exerciseRepository.getById(Number(exerciseId));
+  const sets = defaultSets !== undefined ? Number(defaultSets) : (exercise ? exercise.default_sets : 3);
+  const reps = defaultReps || (exercise ? exercise.default_reps : '8-10');
+  const rest = restSeconds !== undefined ? Number(restSeconds) : (exercise ? exercise.rest_seconds : 90);
+
   routineRepository.addExerciseToRoutine({
     routineId,
     exerciseId: Number(exerciseId),
-    defaultSets: Number(defaultSets) || 3,
-    defaultReps: defaultReps || '8-10',
-    restSeconds: Number(restSeconds) || 90,
+    defaultSets: sets,
+    defaultReps: reps,
+    restSeconds: rest,
     orderIndex: Number(orderIndex) || 0
   });
 

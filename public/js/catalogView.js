@@ -66,7 +66,9 @@ const CatalogView = {
             </h4>
             <div class="exercise-badges">${primaryBadges} ${secondaryBadges}</div>
             <div class="exercise-meta">${ex.equipment}, ${ex.default_sets} set x ${ex.default_reps}</div>
-            <a href="#/exercises/${ex.id}" class="exercise-action">Tambah ke rutinitas</a>
+            <button type="button" class="btn-quick-add-routine" data-id="${ex.id}" data-name="${ex.name}" style="background: none; border: none; padding: 4px 0; font-size: 0.88rem; font-weight: 600; color: var(--primary-green); cursor: pointer; text-align: left; display: block; margin-top: 6px;">
+              + Tambah ke rutinitas
+            </button>
           </div>
         </div>
       `;
@@ -125,9 +127,40 @@ const CatalogView = {
     // Pasang listener klik pada kartu gerakan untuk langsung membuka Tampilan Kelima
     container.querySelectorAll('.exercise-card').forEach(card => {
       card.addEventListener('click', (e) => {
+        if (e.target.closest('.btn-quick-add-routine') || e.target.closest('a')) return;
         const id = card.getAttribute('data-id');
         if (id) {
           window.location.hash = `#/exercises/${id}`;
+        }
+      });
+    });
+
+    // Pasang listener tombol cepat tambah ke rutinitas
+    container.querySelectorAll('.btn-quick-add-routine').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const id = btn.getAttribute('data-id');
+        const name = btn.getAttribute('data-name');
+        btn.textContent = 'Menambahkan...';
+        try {
+          let routines = await API.getRoutines();
+          let targetId;
+          if (routines.length > 0) {
+            targetId = routines[0].id;
+          } else {
+            const newRoutine = await API.request('/api/routines', {
+              method: 'POST',
+              body: JSON.stringify({ name: 'Push Day', estimatedMinutes: 55 })
+            });
+            targetId = newRoutine.id;
+          }
+          await API.addExerciseToRoutine(targetId, Number(id));
+          alert(`✓ "${name}" berhasil ditambahkan ke rutinitas!`);
+          window.location.hash = '#/routines';
+        } catch (err) {
+          alert(`Gagal: ${err.message}`);
+          btn.textContent = '+ Tambah ke rutinitas';
         }
       });
     });

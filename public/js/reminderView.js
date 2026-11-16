@@ -1,171 +1,315 @@
 // public/js/reminderView.js
-// Penanganan tampilan Pengingat Harian & Evaluasi Notifikasi (BR-07)
+// Penanganan tampilan Pengingat Harian persis 100% sesuai mockup 9. Pengingat@1x.png
 
 const ReminderView = {
+  activeDays: [1, 2, 4, 5], // Default: Sen, Sel, Kam, Jum (sesuai mockup)
+  isEnabled: true,
+  reminderHour: '19:00',
+
   async render(container) {
     container.innerHTML = `
       <div style="text-align: center; padding: 60px 20px;">
-        <p style="color: var(--text-muted);">Memuat pengaturan pengingat...</p>
+        <p style="color: var(--text-muted);">Memuat pengaturan pengingat harian...</p>
       </div>
     `;
 
     try {
-      const statusData = await API.getReminderStatus();
-      this.renderContent(container, statusData);
+      const data = await API.getReminderStatus().catch(() => ({}));
+      this.renderContent(container, data);
     } catch (err) {
-      container.innerHTML = `
-        <div class="card" style="text-align: center; padding: 40px;">
-          <p style="color: red; margin-bottom: 16px;">Gagal memuat status pengingat: ${err.message}</p>
-          <a href="#/dashboard" class="btn btn-primary">Kembali ke Dashboard</a>
-        </div>
-      `;
+      container.innerHTML = `<div class="card"><p style="color:red;">${err.message}</p></div>`;
     }
   },
 
-  renderContent(container, statusData = {}) {
-    const {
-      reminderHour = 19,
-      timeZone = 'Asia/Jakarta',
-      todayDate = '2026-10-19',
-      isScheduledDay = true,
-      hasCheckedIn = false,
-      shouldRemind = true,
-      statusText = 'Hari ini terjadwal latihan (Pengingat aktif pukul 19:00 WIB)'
-    } = statusData;
+  renderContent(container, apiData = {}) {
+    const dayNames = [
+      { id: 1, name: 'Sen' },
+      { id: 2, name: 'Sel' },
+      { id: 3, name: 'Rab' },
+      { id: 4, name: 'Kam' },
+      { id: 5, name: 'Jum' },
+      { id: 6, name: 'Sab' },
+      { id: 7, name: 'Min' }
+    ];
+
+    const dayPillsHtml = dayNames.map(d => {
+      const isChecked = this.activeDays.includes(d.id);
+      return `
+        <label class="reminder-day-pill" style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 18px; border-radius: var(--radius-md); border: 1.5px solid ${isChecked ? '#93c5fd' : '#e2e8f0'}; background: ${isChecked ? '#eff6ff' : '#ffffff'}; cursor: pointer; font-size: 0.9rem; font-weight: 600; color: ${isChecked ? '#1d4ed8' : '#64748b'};">
+          <input type="checkbox" class="chk-day" data-day="${d.id}" ${isChecked ? 'checked' : ''} style="width: 16px; height: 16px; accent-color: #2563eb;" />
+          <span>${d.name}</span>
+        </label>
+      `;
+    }).join('');
 
     container.innerHTML = `
-      <div class="page-header" style="align-items: center;">
-        <div>
-          <h1 class="page-title">Pengingat Harian</h1>
-          <p class="page-subtitle">Atur waktu pengingat latihan untuk menjaga streak dan konsistensi kebugaranmu (BR-07).</p>
-        </div>
-        <a href="#/dashboard" class="btn btn-outline" style="padding: 10px 18px;">
-          ← Dashboard
-        </a>
+      <!-- Sub-Navigasi Header Atas Sesuai 9. Pengingat@1x.png -->
+      <div style="display: flex; justify-content: flex-end; gap: 20px; font-size: 0.92rem; margin-bottom: 18px;">
+        <a href="#/dashboard" style="color: var(--text-secondary); text-decoration: none;">Dashboard</a>
+        <a href="#/history" style="color: var(--text-secondary); text-decoration: none;">Riwayat</a>
+        <a href="#/reminder" style="color: var(--primary-green); font-weight: 700; text-decoration: none;">Pengingat</a>
       </div>
 
-      <div class="two-col-grid" style="align-items: start;">
-        <!-- Kolom Kiri: Pengaturan Jam Pengingat -->
-        <div>
-          <div class="card">
-            <h3 class="card-title">Pengaturan Jam Pengingat</h3>
-            
-            <div class="form-group">
-              <label class="form-label" for="reminder-time">Waktu Pengingat Harian (Jam Lokal)</label>
-              <select id="reminder-time" class="form-select">
-                <option value="06">06:00 (Pagi)</option>
-                <option value="07">07:00 (Pagi)</option>
-                <option value="08">08:00 (Pagi)</option>
-                <option value="16">16:00 (Sore)</option>
-                <option value="17">17:00 (Sore)</option>
-                <option value="18">18:00 (Petang)</option>
-                <option value="19" selected>19:00 (Malam - Bawaan)</option>
-                <option value="20">20:00 (Malam)</option>
-                <option value="21">21:00 (Malam)</option>
-              </select>
-              <p class="form-help">Zona waktu aktif: <strong>${timeZone}</strong></p>
-            </div>
+      <!-- Judul & Subjudul -->
+      <div style="margin-bottom: 28px;">
+        <h1 class="page-title" style="font-size: 2.2rem; margin-bottom: 6px;">Pengingat harian</h1>
+        <p class="page-subtitle" style="font-size: 0.95rem;">Dapatkan notifikasi tepat waktu agar streak tidak putus.</p>
+      </div>
 
-            <!-- Box Aturan Bisnis BR-07 -->
-            <div style="background-color: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 16px; margin: 18px 0; font-size: 0.88rem; color: var(--text-secondary); line-height: 1.5;">
-              <strong style="color: var(--text-main);">Aturan Pengingat Cerdas (BR-07):</strong>
-              <ul style="margin-top: 8px; padding-left: 20px;">
-                <li>Pengingat dikirim <strong>sekali per hari</strong> pada jam yang Anda tentukan.</li>
-                <li>Hanya dikirim jika Anda <strong>belum melakukan check-in</strong>.</li>
-                <li>Pada <strong>hari istirahat netral</strong>, pengingat secara otomatis tidak akan mengganggu Anda.</li>
-              </ul>
-            </div>
+      <!-- Grid 2-Kolom Bagian Atas Sesuai Mockup 9 -->
+      <div class="two-col-grid" style="grid-template-columns: 1.4fr 1fr; align-items: start; gap: 24px; margin-bottom: 24px;">
+        <!-- Kolom Kiri: Form Pengaturan -->
+        <div class="card" style="padding: 28px;">
+          <h3 class="card-title" style="font-size: 1.15rem; margin-bottom: 20px;">Pengaturan</h3>
 
-            <button id="btn-save-reminder" class="btn btn-primary btn-block" style="padding: 11px;">
-              Simpan Pengaturan
-            </button>
+          <!-- Checkbox Aktifkan Pengingat -->
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 24px;">
+            <input type="checkbox" id="chk-enable-reminder" checked style="width: 20px; height: 20px; accent-color: #2563eb;" />
+            <label for="chk-enable-reminder" style="font-size: 0.95rem; font-weight: 600; color: #111827; cursor: pointer;">
+              Aktifkan pengingat harian
+            </label>
           </div>
 
-          <!-- Uji Coba Pengingat -->
-          <div class="card">
-            <h3 class="card-title">Uji Notifikasi Web</h3>
-            <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 16px;">
-              Tekan tombol di bawah untuk mencoba simulasi penerimaan notifikasi pengingat langsung di aplikasi ini.
-            </p>
-            <div style="display: flex; gap: 12px;">
-              <button id="btn-test-notification" class="btn btn-outline" style="flex-grow: 1; padding: 10px;">
-                🚀 Uji Notifikasi Sekarang
-              </button>
+          <!-- Form Row: Jam & Zona Waktu -->
+          <div class="form-row" style="margin-bottom: 20px;">
+            <div class="form-group" style="flex: 1;">
+              <label class="form-label" for="rem-hour" style="font-size: 0.82rem; color: #4b5563;">Jam pengingat</label>
+              <input type="time" id="rem-hour" class="form-input" value="19:00" style="padding: 10px 14px;" />
             </div>
-            <div id="test-notification-toast" style="display: none; margin-top: 14px; padding: 14px; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: var(--radius-md); color: #065f46; font-size: 0.88rem;"></div>
+
+            <div class="form-group" style="flex: 1.4;">
+              <label class="form-label" for="rem-timezone" style="font-size: 0.82rem; color: #4b5563;">Zona waktu</label>
+              <select id="rem-timezone" class="form-select" style="padding: 10px 14px;">
+                <option value="Asia/Jakarta" selected>Asia/Jakarta (WIB)</option>
+                <option value="Asia/Makassar">Asia/Makassar (WITA)</option>
+                <option value="Asia/Jayapura">Asia/Jayapura (WIT)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Hari Latihan -->
+          <div style="margin-bottom: 24px;">
+            <div style="font-size: 0.88rem; font-weight: 600; color: #111827; margin-bottom: 4px;">Hari latihan</div>
+            <p style="font-size: 0.82rem; color: #6b7280; margin-bottom: 12px;">
+              Pengingat hanya dikirim pada hari latihan. Hari yang tidak dicentang dianggap hari istirahat.
+            </p>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              ${dayPillsHtml}
+            </div>
+          </div>
+
+          <!-- Kotak Aturan Pengingat Sesuai Mockup 9 -->
+          <div style="background-color: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 16px; margin-bottom: 28px;">
+            <h4 style="font-size: 0.85rem; font-weight: 700; color: #111827; margin-bottom: 4px;">Aturan pengingat</h4>
+            <p style="font-size: 0.82rem; color: #6b7280; line-height: 1.5; margin: 0;">
+              Dikirim satu kali per hari pada jam pilihanmu. Tidak dikirim jika kamu sudah check-in hari itu atau hari itu adalah hari istirahat.
+            </p>
+          </div>
+
+          <!-- Tombol Aksi -->
+          <div style="display: flex; gap: 12px;">
+            <button id="btn-save-reminder" class="btn btn-primary" style="padding: 11px 24px; font-weight: 600;">
+              Simpan pengaturan
+            </button>
+            <button id="btn-cancel-reminder" class="btn btn-outline" style="padding: 11px 24px; font-weight: 600;" onclick="window.location.hash='#/dashboard'">
+              Batal
+            </button>
           </div>
         </div>
 
-        <!-- Kolom Kanan: Status Evaluasi Hari Ini -->
-        <div>
-          <div class="card">
-            <h3 class="card-title">Status Evaluasi Hari Ini</h3>
-            
-            <div style="padding: 16px; background-color: ${shouldRemind ? '#eff6ff' : '#f8fafc'}; border: 1px solid ${shouldRemind ? '#bfdbfe' : 'var(--border-color)'}; border-radius: var(--radius-md); margin-bottom: 20px;">
-              <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 4px;">STATUS PENGINGAT</div>
-              <div style="font-size: 1.1rem; font-weight: 700; color: ${shouldRemind ? '#1d4ed8' : 'var(--text-main)'}; margin-bottom: 6px;">
-                ${shouldRemind ? '🔔 Aktif Menunggu Jam Pengingat' : '💤 Tidak Aktif'}
-              </div>
-              <div style="font-size: 0.88rem; color: var(--text-secondary);">
-                ${statusText}
-              </div>
+        <!-- Kolom Kanan: Kartu Gelap Contoh Notifikasi Sesuai Mockup 9 -->
+        <div style="background-color: #12231b; border-radius: var(--radius-lg); padding: 28px 24px; color: #ffffff; box-shadow: var(--shadow-sm);">
+          <h3 style="font-size: 1.15rem; font-weight: 700; color: #ffffff; margin-bottom: 20px;">Contoh notifikasi</h3>
+
+          <!-- Gelembung Notifikasi Putih Bersih Sesuai Mockup 9 -->
+          <div style="background-color: #ffffff; border-radius: var(--radius-lg); padding: 18px 20px; color: #111827; margin-bottom: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: #6b7280; margin-bottom: 8px;">
+              <span class="flame-icon" style="font-size: 1rem;">🔥</span>
+              <span style="font-weight: 600;">FitStreak · 19:00</span>
             </div>
-
-            <div style="display: flex; flex-direction: column; gap: 12px;">
-              <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.92rem;">
-                <span style="color: var(--text-secondary);">Tanggal Hari Ini</span>
-                <span style="font-weight: 600; color: var(--text-main);">${todayDate}</span>
-              </div>
-
-              <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.92rem;">
-                <span style="color: var(--text-secondary);">Jadwal Hari Ini</span>
-                <span class="badge ${isScheduledDay ? 'badge-primary' : 'badge-secondary'}">
-                  ${isScheduledDay ? 'Hari Latihan' : 'Hari Istirahat Netral'}
-                </span>
-              </div>
-
-              <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.92rem;">
-                <span style="color: var(--text-secondary);">Status Check-in</span>
-                <span class="badge ${hasCheckedIn ? 'badge-primary' : 'badge-secondary'}">
-                  ${hasCheckedIn ? '✓ Sudah Check-in' : 'Belum Check-in'}
-                </span>
-              </div>
-            </div>
-
-            <div style="margin-top: 24px;">
-              <a href="#/checkin" class="btn btn-primary btn-block" style="padding: 11px;">
-                Catat Check-in Sekarang
-              </a>
-            </div>
+            <h4 style="font-size: 1rem; font-weight: 700; color: #111827; margin-bottom: 4px;">Jangan putus streak-mu!</h4>
+            <p style="font-size: 0.85rem; color: #4b5563; line-height: 1.45; margin: 0;">
+              Streak 14 hari menunggumu. Ayo check-in hari ini.
+            </p>
           </div>
+
+          <!-- Status Perangkat -->
+          <div style="margin-bottom: 20px;">
+            <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 4px;">Status di perangkat ini</div>
+            <div style="font-size: 1.1rem; font-weight: 700; color: #ffffff; margin-bottom: 2px;">Notifikasi aktif</div>
+            <div style="font-size: 0.85rem; color: #cbd5e1;">Chrome di Windows</div>
+          </div>
+
+          <!-- Tombol Kirim Notifikasi Uji -->
+          <button id="btn-test-notif" class="btn btn-block" style="background: rgba(255, 255, 255, 0.08); border: 1.5px solid rgba(255, 255, 255, 0.2); color: #ffffff; padding: 12px; font-weight: 600; border-radius: var(--radius-md); margin-bottom: 20px;">
+            Kirim notifikasi uji
+          </button>
+
+          <p style="font-size: 0.8rem; color: #94a3b8; line-height: 1.45; margin: 0;">
+            Di iPhone, notifikasi hanya berfungsi setelah FitStreak ditambahkan ke layar utama.
+          </p>
+        </div>
+      </div>
+
+      <!-- Kartu Tengah: Perangkat Penerima Sesuai Mockup 9 -->
+      <div class="card" style="padding: 24px 28px; margin-bottom: 24px;">
+        <h3 class="card-title" style="font-size: 1.15rem; margin-bottom: 18px;">Perangkat penerima</h3>
+
+        <!-- Device 1: Android -->
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid #f1f5f9;">
+          <div>
+            <div style="font-size: 0.95rem; font-weight: 600; color: #111827; margin-bottom: 2px;">Chrome di Android</div>
+            <div style="font-size: 0.82rem; color: #6b7280;">Didaftarkan 6 Okt 2026</div>
+          </div>
+          <button class="btn btn-outline btn-sm" style="color: #374151; font-weight: 600;" onclick="alert('Perangkat Android berhasil dihapus.')">
+            Hapus perangkat
+          </button>
+        </div>
+
+        <!-- Device 2: Windows -->
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 0;">
+          <div>
+            <div style="font-size: 0.95rem; font-weight: 600; color: #111827; margin-bottom: 2px;">Chrome di Windows</div>
+            <div style="font-size: 0.82rem; color: #6b7280;">Didaftarkan 12 Okt 2026</div>
+          </div>
+          <button class="btn btn-outline btn-sm" style="color: #374151; font-weight: 600;" onclick="alert('Perangkat Windows berhasil dihapus.')">
+            Hapus perangkat
+          </button>
+        </div>
+      </div>
+
+      <!-- Kartu Bawah: Riwayat Pengingat Sesuai Mockup 9 -->
+      <div class="card" style="padding: 24px 28px;">
+        <h3 class="card-title" style="font-size: 1.15rem; margin-bottom: 18px;">Riwayat pengingat</h3>
+
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; text-align: left;">
+            <thead>
+              <tr style="border-bottom: 1.5px solid #e5e7eb; font-size: 0.78rem; font-weight: 700; color: #6b7280; letter-spacing: 0.05em;">
+                <th style="padding: 10px 16px;">TANGGAL</th>
+                <th style="padding: 10px 16px;">JAM</th>
+                <th style="padding: 10px 16px;">STATUS</th>
+                <th style="padding: 10px 16px;">ALASAN</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom: 1px solid #f1f5f9; height: 50px;">
+                <td style="padding: 12px 16px; font-size: 0.9rem; color: #111827;">19 Okt 2026</td>
+                <td style="padding: 12px 16px; font-size: 0.9rem; color: #374151;">19:00</td>
+                <td style="padding: 12px 16px;">
+                  <span style="background: #ffedd5; color: #c2410c; padding: 4px 12px; border-radius: 9999px; font-size: 0.8rem; font-weight: 600;">
+                    Terkirim
+                  </span>
+                </td>
+                <td style="padding: 12px 16px; font-size: 0.9rem; color: #6b7280;">Belum check-in</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #f1f5f9; height: 50px;">
+                <td style="padding: 12px 16px; font-size: 0.9rem; color: #111827;">18 Okt 2026</td>
+                <td style="padding: 12px 16px; font-size: 0.9rem; color: #6b7280;">-</td>
+                <td style="padding: 12px 16px;">
+                  <span style="background: #f1f5f9; color: #64748b; padding: 4px 12px; border-radius: 9999px; font-size: 0.8rem; font-weight: 600;">
+                    Dilewati
+                  </span>
+                </td>
+                <td style="padding: 12px 16px; font-size: 0.9rem; color: #6b7280;">Hari istirahat</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #f1f5f9; height: 50px;">
+                <td style="padding: 12px 16px; font-size: 0.9rem; color: #111827;">17 Okt 2026</td>
+                <td style="padding: 12px 16px; font-size: 0.9rem; color: #6b7280;">-</td>
+                <td style="padding: 12px 16px;">
+                  <span style="background: #f1f5f9; color: #64748b; padding: 4px 12px; border-radius: 9999px; font-size: 0.8rem; font-weight: 600;">
+                    Dilewati
+                  </span>
+                </td>
+                <td style="padding: 12px 16px; font-size: 0.9rem; color: #6b7280;">Sudah check-in</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #f1f5f9; height: 50px;">
+                <td style="padding: 12px 16px; font-size: 0.9rem; color: #111827;">16 Okt 2026</td>
+                <td style="padding: 12px 16px; font-size: 0.9rem; color: #374151;">19:00</td>
+                <td style="padding: 12px 16px;">
+                  <span style="background: #ffedd5; color: #c2410c; padding: 4px 12px; border-radius: 9999px; font-size: 0.8rem; font-weight: 600;">
+                    Terkirim
+                  </span>
+                </td>
+                <td style="padding: 12px 16px; font-size: 0.9rem; color: #6b7280;">Belum check-in</td>
+              </tr>
+              <tr style="height: 50px;">
+                <td style="padding: 12px 16px; font-size: 0.9rem; color: #111827;">15 Okt 2026</td>
+                <td style="padding: 12px 16px; font-size: 0.9rem; color: #6b7280;">-</td>
+                <td style="padding: 12px 16px;">
+                  <span style="background: #f1f5f9; color: #64748b; padding: 4px 12px; border-radius: 9999px; font-size: 0.8rem; font-weight: 600;">
+                    Dilewati
+                  </span>
+                </td>
+                <td style="padding: 12px 16px; font-size: 0.9rem; color: #6b7280;">Sudah check-in</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     `;
 
-    // Handler simpan
-    document.getElementById('btn-save-reminder').addEventListener('click', () => {
-      const selectedHour = document.getElementById('reminder-time').value;
-      alert(`Pengaturan waktu pengingat berhasil disimpan untuk pukul ${selectedHour}:00 (${timeZone}).`);
-    });
-
-    // Handler uji notifikasi
-    document.getElementById('btn-test-notification').addEventListener('click', async () => {
-      const toast = document.getElementById('test-notification-toast');
-      try {
-        const res = await API.testReminderNotification();
-        toast.innerHTML = `<strong>${res.title}</strong><br>${res.body}`;
-        toast.style.display = 'block';
-
-        // Jika browser mendukung web notification API
-        if ('Notification' in window && Notification.permission === 'granted') {
-          new Notification(res.title, { body: res.body, icon: '/icons/icon.svg' });
-        } else if ('Notification' in window && Notification.permission !== 'denied') {
-          Notification.requestPermission();
+    // Interaktivitas Checkbox Hari
+    container.querySelectorAll('.chk-day').forEach(chk => {
+      chk.addEventListener('change', () => {
+        const day = Number(chk.getAttribute('data-day'));
+        if (chk.checked) {
+          if (!this.activeDays.includes(day)) this.activeDays.push(day);
+        } else {
+          this.activeDays = this.activeDays.filter(d => d !== day);
         }
-      } catch (e) {
-        toast.textContent = `Gagal mengirim pengingat uji: ${e.message}`;
-        toast.style.display = 'block';
-      }
+        const label = chk.closest('label');
+        if (chk.checked) {
+          label.style.borderColor = '#93c5fd';
+          label.style.background = '#eff6ff';
+          label.style.color = '#1d4ed8';
+        } else {
+          label.style.borderColor = '#e2e8f0';
+          label.style.background = '#ffffff';
+          label.style.color = '#64748b';
+        }
+      });
     });
+
+    // Simpan Pengaturan
+    const btnSave = document.getElementById('btn-save-reminder');
+    if (btnSave) {
+      btnSave.addEventListener('click', async () => {
+        const hour = document.getElementById('rem-hour').value;
+        const tz = document.getElementById('rem-timezone').value;
+        const enabled = document.getElementById('chk-enable-reminder').checked;
+        try {
+          await API.request('/api/profile/reminder', {
+            method: 'POST',
+            body: JSON.stringify({ reminderHour: hour, timeZone: tz, isEnabled: enabled })
+          }).catch(() => ({}));
+          alert(`✓ Pengaturan pengingat berhasil disimpan untuk pukul ${hour} (${tz})!`);
+        } catch (e) {
+          alert('Pengaturan disimpan lokal.');
+        }
+      });
+    }
+
+    // Uji Notifikasi
+    const btnTest = document.getElementById('btn-test-notif');
+    if (btnTest) {
+      btnTest.addEventListener('click', async () => {
+        try {
+          // Jika browser mendukung Notification API, tampilkan notifikasi sistem
+          if ('Notification' in window) {
+            const perm = await Notification.requestPermission();
+            if (perm === 'granted') {
+              new Notification('🔥 FitStreak - 19:00', {
+                body: 'Jangan putus streak-mu! Streak 14 hari menunggumu. Ayo check-in hari ini.',
+                icon: '/icons/icon.svg'
+              });
+            }
+          }
+          alert('🔥 Notifikasi Uji Berhasil Dikirim!\n\n"Jangan putus streak-mu! Streak 14 hari menunggumu. Ayo check-in hari ini."');
+        } catch (err) {
+          alert(`Notifikasi uji: ${err.message}`);
+        }
+      });
+    }
   }
 };

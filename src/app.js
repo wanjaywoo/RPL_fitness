@@ -11,6 +11,7 @@ const checkinRoutes = require('./routes/checkinRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const exerciseRoutes = require('./routes/exerciseRoutes');
 const routineRoutes = require('./routes/routineRoutes');
+const historyRoutes = require('./routes/historyRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const errorHandler = require('./middleware/errorHandler');
 
@@ -42,6 +43,7 @@ app.use('/api/checkins', checkinRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/exercises', exerciseRoutes);
 app.use('/api/routines', routineRoutes);
+app.use('/api/history', historyRoutes);
 app.use('/api/admin', adminRoutes);
 
 // Health check endpoint

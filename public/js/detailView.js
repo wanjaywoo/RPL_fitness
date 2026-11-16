@@ -83,6 +83,27 @@ const DetailView = {
               Tampak depan dan belakang
             </div>
           </div>
+
+          <!-- Gambaran Manfaat untuk Tubuh -->
+          <div style="margin-top: 20px; padding: 16px; background-color: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-md); border-left: 4px solid var(--primary-green);">
+            <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+              <span>✨</span>
+              <span>Gambaran Manfaat untuk Tubuh</span>
+            </h4>
+            <div style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6;">
+              ${exercise.is_cardio ? `
+                <div style="margin-bottom: 8px;">❤️ <strong>Kesehatan Jantung & Pembuluh Darah:</strong> Memperkuat kontraksi otot jantung, meningkatkan sirkulasi darah, dan menurunkan denyut istirahat.</div>
+                <div style="margin-bottom: 8px;">🔥 <strong>Pembakaran Lemak & Efisiensi Energi:</strong> Meningkatkan pengeluaran kalori harian untuk mendukung target Cutting dan menjaga komposisi tubuh.</div>
+                <div style="margin-bottom: 8px;">🫁 <strong>Stamina & Kapasitas Paru (VO2 Max):</strong> Meningkatkan efisiensi penyerapan oksigen agar tidak mudah letih beraktivitas.</div>
+                <div>🦵 <strong>Ketahanan Kaki & Mobilitas:</strong> Melatih daya tahan otot betis, paha, dan tumpuan persendian secara fungsional.</div>
+              ` : `
+                <div style="margin-bottom: 8px;">💪 <strong>Pertumbuhan Massa Otot:</strong> Menstimulasi serat otot utama untuk memicu adaptasi hipertrofi dan kekuatan.</div>
+                <div style="margin-bottom: 8px;">⚡ <strong>Kekuatan & Stabilitas Fisik:</strong> Melatih koordinasi saraf-otot dan memperkuat tumpuan postur tubuh.</div>
+                <div style="margin-bottom: 8px;">🦴 <strong>Kepadatan Tulang & Sendi:</strong> Beban progresif memperkuat ligamen dan merangsang kepadatan mineral tulang.</div>
+                <div>🔥 <strong>Peningkatan Metabolisme (BMR):</strong> Massa otot yang terjaga membakar lebih banyak kalori alami saat beristirahat.</div>
+              `}
+            </div>
+          </div>
         </div>
 
         <!-- Kolom Kanan: Rincian Otot, Cara Melakukan, & Pengaturan Awal -->
@@ -149,17 +170,28 @@ const DetailView = {
     `;
 
     document.getElementById('btn-add-to-routine').addEventListener('click', async () => {
+      const btn = document.getElementById('btn-add-to-routine');
+      btn.disabled = true;
+      btn.textContent = 'Menambahkan...';
       try {
-        const routines = await API.getRoutines();
+        let routines = await API.getRoutines();
+        let targetRoutineId;
         if (routines.length > 0) {
-          await API.addExerciseToRoutine(routines[0].id, exercise.id);
-          alert(`Gerakan "${exercise.name}" berhasil ditambahkan ke rutinitas ${routines[0].name}!`);
-          window.location.hash = '#/routines';
+          targetRoutineId = routines[0].id;
         } else {
-          alert('Belum ada rutinitas aktif.');
+          const newRoutine = await API.request('/api/routines', {
+            method: 'POST',
+            body: JSON.stringify({ name: 'Program Latihan Saya', estimatedMinutes: 55 })
+          });
+          targetRoutineId = newRoutine.id;
         }
+        await API.addExerciseToRoutine(targetRoutineId, exercise.id);
+        alert(`✓ Gerakan "${exercise.name}" berhasil ditambahkan ke rutinitas!`);
+        window.location.hash = '#/routines';
       } catch (err) {
-        alert(err.message);
+        alert(`Gagal: ${err.message}`);
+        btn.disabled = false;
+        btn.textContent = 'Tambah ke rutinitas';
       }
     });
   }

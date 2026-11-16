@@ -98,6 +98,8 @@ Database makanan, input kalori otomatis dari foto, fitur sosial atau papan perin
 
 ## 8. Definisi "selesai" untuk setiap tugas
 
+// Edit untuk klaim lencana Pair Extraordinaire bersama @wanjaywoo
+
 - [ ] Sesuai berkas rancangan (FR/BR/TC yang disebut di tugas).
 - [ ] `npm test` hijau, tidak ada tes yang dilewati atau dihapus.
 - [ ] Tidak ada rahasia di kode; tidak ada pustaka baru tanpa persetujuan.

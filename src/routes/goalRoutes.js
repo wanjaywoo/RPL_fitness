@@ -19,7 +19,37 @@ router.get('/active', (req, res) => {
   }
 
   const macros = goalRepository.getMacroTargetByGoalId(goal.id);
-  res.json({ goal, macros });
+  const latestWeight = weightLogRepository.getLatestByUserId(req.user.id);
+  const weightKg = latestWeight ? latestWeight.weight_kg : 70;
+
+  const birth = new Date(req.user.birthDate);
+  const age = new Date().getFullYear() - birth.getFullYear();
+
+  const bmr = calorieService.calculateBmr({
+    weight: weightKg,
+    height: req.user.heightCm,
+    age,
+    gender: req.user.gender
+  });
+
+  const tdee = calorieService.calculateTdee({
+    bmr,
+    activityLevel: goal.activity_level || 'light'
+  });
+
+  res.json({
+    goal,
+    macros,
+    metrics: {
+      weightKg,
+      heightCm: req.user.heightCm,
+      age,
+      gender: req.user.gender,
+      bmr,
+      tdee,
+      activityLevel: goal.activity_level || 'light'
+    }
+  });
 });
 
 // POST /api/goals: Menetapkan target baru dengan kalkulasi ulang

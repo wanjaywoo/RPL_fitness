@@ -83,6 +83,9 @@ const App = {
       case '#/routines':
         RoutinesView.render(mainContainer);
         break;
+      case '#/target':
+        TargetView.render(mainContainer);
+        break;
       case '#/history':
         HistoryView.render(mainContainer);
         break;
@@ -108,6 +111,7 @@ const App = {
     if (hash.includes('checkin')) currentSection = 'checkin';
     else if (hash.includes('catalog') || hash.includes('exercises')) currentSection = 'exercises';
     else if (hash.includes('routines')) currentSection = 'routines';
+    else if (hash.includes('target')) currentSection = 'target';
     else if (hash.includes('history')) currentSection = 'history';
     else if (hash.includes('reminder')) currentSection = 'reminder';
 

@@ -2,6 +2,17 @@
 // Pembungkus fetch API untuk mempermudah komunikasi client ke server Express
 
 const API = {
+  getBaseUrl() {
+    // Jika aplikasi dibuka lewat file:/// atau Live Server (port selain 3000), arahkan ke server backend port 3000
+    if (typeof window !== 'undefined') {
+      if (window.location.protocol === 'file:' || window.location.port !== '3000') {
+        const host = window.location.hostname || 'localhost';
+        return `http://${host}:3000`;
+      }
+    }
+    return '';
+  },
+
   getToken() {
     return localStorage.getItem('fitstreak_token');
   },
@@ -38,10 +49,20 @@ const API = {
       headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const res = await fetch(endpoint, {
-      ...options,
-      headers
-    });
+    const baseUrl = this.getBaseUrl();
+    const fullUrl = endpoint.startsWith('http') ? endpoint : `${baseUrl}${endpoint}`;
+
+    let res;
+    try {
+      res = await fetch(fullUrl, {
+        ...options,
+        headers
+      });
+    } catch (networkErr) {
+      throw new Error(
+        `Gagal terhubung ke server (${networkErr.message}). Pastikan server backend sudah dinyalakan dengan perintah 'npm start' di CMD pada port 3000.`
+      );
+    }
 
     const data = await res.json().catch(() => ({}));
 
@@ -149,6 +170,18 @@ const API = {
   async deleteRoutine(id) {
     return this.request(`/api/routines/${id}`, {
       method: 'DELETE'
+    });
+  },
+
+  // Target & Kebugaran
+  async getActiveGoal() {
+    return this.request('/api/goals/active');
+  },
+
+  async updateGoal(goalData) {
+    return this.request('/api/goals', {
+      method: 'POST',
+      body: JSON.stringify(goalData)
     });
   },
 

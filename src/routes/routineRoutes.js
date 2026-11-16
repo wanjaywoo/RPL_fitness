@@ -127,7 +127,13 @@ router.post('/:id/exercises', (req, res) => {
   res.status(201).json(updated);
 });
 
-// DELETE /api/routines/:id
+// DELETE /api/routines/:id/exercises/:exerciseRoutineId: Menghapus gerakan dari rutinitas
+router.delete('/:id/exercises/:exerciseRoutineId', (req, res) => {
+  routineRepository.removeExerciseFromRoutine(Number(req.params.exerciseRoutineId));
+  res.json({ message: 'Gerakan berhasil dihapus dari rutinitas' });
+});
+
+// DELETE /api/routines/:id: Menghapus seluruh rutinitas
 router.delete('/:id', (req, res) => {
   routineRepository.deleteRoutine(Number(req.params.id), req.user.id);
   res.json({ message: 'Rutinitas berhasil dihapus' });

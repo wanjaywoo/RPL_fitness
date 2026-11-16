@@ -181,7 +181,7 @@ const DetailView = {
         } else {
           const newRoutine = await API.request('/api/routines', {
             method: 'POST',
-            body: JSON.stringify({ name: 'Program Latihan Saya', estimatedMinutes: 55 })
+            body: JSON.stringify({ name: 'Push Day', estimatedMinutes: 55 })
           });
           targetRoutineId = newRoutine.id;
         }

@@ -47,28 +47,31 @@ const RoutinesView = {
         { name: 'Triceps Pushdown', default_sets: 3, default_reps: '10-12', rest_seconds: 60, primary_muscles: 'Trisep' }
       ];
 
-    const exerciseItemsHtml = routineExercises.map(ex => {
+    const exerciseItemsHtml = routineExercises.map((ex, idx) => {
       const thumb = SvgMuscleRenderer.renderThumbnail({
         primaryMuscles: [ex.primary_muscles || 'Dada'],
         secondaryMuscles: []
       });
 
       return `
-        <div class="routine-exercise-item">
-          <div style="width: 44px; height: 50px; background: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center;">
-            ${thumb}
+        <div class="routine-exercise-item" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: #ffffff; border: 1px solid var(--border-color); border-radius: var(--radius-md); margin-bottom: 10px;">
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <div style="width: 44px; height: 50px; background: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              ${thumb}
+            </div>
+            <div>
+              <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin-bottom: 2px;">${ex.name}</h4>
+              <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">
+                ${ex.is_cardio ? `${ex.default_sets} sesi · ${ex.default_reps} · Latihan Kardio` : `${ex.default_sets} set x ${ex.default_reps} repetisi · istirahat ${ex.rest_seconds} dtk`}
+              </p>
+            </div>
           </div>
-          <div>
-            <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin-bottom: 2px;">${ex.name}</h4>
-            <p style="font-size: 0.8rem; color: var(--text-muted);">
-              ${ex.is_cardio ? `${ex.default_sets} sesi · ${ex.default_reps} · Latihan Kardio` : `${ex.default_sets} set x ${ex.default_reps} repetisi · istirahat ${ex.rest_seconds} dtk`}
-            </p>
-          </div>
-          <div class="routine-controls">
-            <button class="control-btn" title="Pindah ke atas">^</button>
-            <button class="control-btn" title="Pindah ke bawah">v</button>
-            <button class="control-btn" title="Salin gerakan">📄</button>
-            <button class="control-btn" title="Hapus gerakan">🗑️</button>
+          <div class="routine-controls" style="display: flex; gap: 6px;">
+            ${ex.id && activeRoutine.id ? `
+              <button class="btn-delete-exercise" data-routine-id="${activeRoutine.id}" data-id="${ex.id}" title="Hapus dari rutinitas" style="background: none; border: 1px solid #fee2e2; color: #ef4444; border-radius: 6px; padding: 6px 10px; cursor: pointer; font-size: 0.85rem;">
+                🗑️ Hapus
+              </button>
+            ` : ''}
           </div>
         </div>
       `;
@@ -156,7 +159,7 @@ const RoutinesView = {
                   <p style="font-size: 0.8rem; color: var(--text-muted);">Melatih paha belakang, bokong</p>
                 </div>
               </div>
-              <button class="btn btn-outline btn-sm" onclick="alert('Romanian Deadlift ditambahkan ke rutinitas!')">Tambah</button>
+              <button class="btn btn-outline btn-sm btn-quick-rec" data-id="10" data-name="Romanian Deadlift">Tambah</button>
             </div>
 
             <!-- Standing Calf Raise -->
@@ -170,7 +173,7 @@ const RoutinesView = {
                   <p style="font-size: 0.8rem; color: var(--text-muted);">Melatih betis</p>
                 </div>
               </div>
-              <button class="btn btn-outline btn-sm" onclick="alert('Standing Calf Raise ditambahkan ke rutinitas!')">Tambah</button>
+              <button class="btn btn-outline btn-sm btn-quick-rec" data-id="11" data-name="Standing Calf Raise">Tambah</button>
             </div>
           </div>
         </div>
@@ -182,15 +185,66 @@ const RoutinesView = {
       </footer>
     `;
 
+    // Pasang listener hapus gerakan
+    container.querySelectorAll('.btn-delete-exercise').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const routineId = btn.getAttribute('data-routine-id');
+        const exId = btn.getAttribute('data-id');
+        if (confirm('Hapus gerakan ini dari rutinitas?')) {
+          try {
+            await API.request(`/api/routines/${routineId}/exercises/${exId}`, { method: 'DELETE' });
+            this.render(container);
+          } catch (err) {
+            alert(`Gagal menghapus: ${err.message}`);
+          }
+        }
+      });
+    });
+
+    // Pasang listener tambah gerakan rekomendasi
+    container.querySelectorAll('.btn-quick-rec').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const exId = btn.getAttribute('data-id');
+        const exName = btn.getAttribute('data-name');
+        btn.textContent = 'Menambah...';
+        try {
+          let routineId = activeRoutine.id;
+          if (!routineId) {
+            const newRoutine = await API.request('/api/routines', {
+              method: 'POST',
+              body: JSON.stringify({ name: 'Push Day', estimatedMinutes: 55 })
+            });
+            routineId = newRoutine.id;
+          }
+          await API.addExerciseToRoutine(routineId, Number(exId));
+          alert(`✓ "${exName}" berhasil ditambahkan ke rutinitas!`);
+          this.render(container);
+        } catch (err) {
+          alert(`Gagal: ${err.message}`);
+          btn.textContent = 'Tambah';
+        }
+      });
+    });
+
     document.getElementById('btn-use-program').addEventListener('click', () => {
       alert('Program Upper/Lower berhasil diaktifkan untuk akunmu!');
     });
 
-    document.getElementById('btn-create-routine').addEventListener('click', () => {
+    document.getElementById('btn-create-routine').addEventListener('click', async () => {
       const name = prompt('Masukkan nama rutinitas baru:', 'Leg Day');
       if (name) {
-        alert(`Rutinitas "${name}" berhasil dibuat! Silakan tambahkan gerakan dari katalog.`);
-        window.location.hash = '#/catalog';
+        try {
+          await API.request('/api/routines', {
+            method: 'POST',
+            body: JSON.stringify({ name, estimatedMinutes: 55 })
+          });
+          alert(`Rutinitas "${name}" berhasil dibuat! Silakan tambahkan gerakan dari katalog.`);
+          this.render(container);
+        } catch (err) {
+          alert(`Gagal membuat rutinitas: ${err.message}`);
+        }
       }
     });
   }

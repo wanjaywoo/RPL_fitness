@@ -15,7 +15,7 @@ class RoutineRepository {
     for (const routine of routines) {
       const exStmt = db.prepare(`
         SELECT re.*, e.name, e.category, e.equipment, e.is_cardio,
-               (SELECT GROUP_CONCAT(m.name, ', ') FROM exercise_muscles em JOIN muscles m ON em.muscle_id = m.id WHERE em.exercise_id = e.id AND em.is_primary = 1) AS primary_muscles
+               (SELECT GROUP_CONCAT(em.muscle_name, ', ') FROM exercise_muscles em WHERE em.exercise_id = e.id AND em.is_primary = 1) AS primary_muscles
         FROM routine_exercises re
         JOIN exercises e ON re.exercise_id = e.id
         WHERE re.routine_id = ?
@@ -34,7 +34,7 @@ class RoutineRepository {
 
     const exStmt = db.prepare(`
       SELECT re.*, e.name, e.category, e.equipment, e.is_cardio,
-             (SELECT GROUP_CONCAT(m.name, ', ') FROM exercise_muscles em JOIN muscles m ON em.muscle_id = m.id WHERE em.exercise_id = e.id AND em.is_primary = 1) AS primary_muscles
+             (SELECT GROUP_CONCAT(em.muscle_name, ', ') FROM exercise_muscles em WHERE em.exercise_id = e.id AND em.is_primary = 1) AS primary_muscles
       FROM routine_exercises re
       JOIN exercises e ON re.exercise_id = e.id
       WHERE re.routine_id = ?

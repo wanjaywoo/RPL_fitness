@@ -145,7 +145,14 @@
   color: var(--text-muted);
 }
 
-/* Tata Letak Layar Autentikasi / Registrasi */
+body.auth-mode .main-content {
+  padding: 0;
+  max-width: 100%;
+  margin: 0;
+  width: 100%;
+}
+
+/* Tata Letak Layar Autentikasi / Registrasi Sesuai tampilan buat akun.png */
 .auth-page {
   min-height: 100vh;
   display: flex;
@@ -180,6 +187,98 @@
   width: 100%;
   max-width: 680px;
   box-shadow: var(--shadow-sm);
+}
+
+/* Tata Letak Layar Login Split 2-Kolom Persis Sesuai login.png */
+.login-split-container {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.login-left-pane {
+  flex: 1.1;
+  background-color: #12231b;
+  color: #ffffff;
+  padding: 60px 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.login-left-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.login-left-content {
+  margin: auto 0;
+  max-width: 540px;
+}
+
+.login-left-heading {
+  font-size: 3.5rem;
+  font-weight: 800;
+  line-height: 1.15;
+  color: #ffffff;
+  margin-bottom: 24px;
+  letter-spacing: -0.02em;
+}
+
+.login-left-text {
+  font-size: 1.15rem;
+  line-height: 1.6;
+  color: #cbd5e1;
+  margin-bottom: 40px;
+}
+
+.login-left-pills {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.login-pill {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  padding: 10px 24px;
+  border-radius: 9999px;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.login-right-pane {
+  flex: 0.9;
+  background-color: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 40px;
+}
+
+.login-form-container {
+  width: 100%;
+  max-width: 440px;
+}
+
+@media (max-width: 960px) {
+  .login-split-container {
+    flex-direction: column;
+  }
+  .login-left-pane {
+    padding: 40px 24px;
+  }
+  .login-left-heading {
+    font-size: 2.2rem;
+  }
+  .login-right-pane {
+    padding: 40px 20px;
+  }
 }
 
 /* Navigasi Bawah Ponsel (PWA Mobile) */

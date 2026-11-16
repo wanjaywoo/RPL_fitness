@@ -133,50 +133,69 @@ const AuthView = {
 
   renderLogin(container) {
     container.innerHTML = `
-      <div class="auth-page">
-        <header class="auth-header">
-          <span class="flame-icon">🔥</span>
-          <span>FitStreak</span>
-        </header>
-
-        <main class="auth-body">
-          <div style="text-align: left; width: 100%; max-width: 440px; margin-bottom: 24px;">
-            <h1 style="font-size: 2rem; font-weight: 700; color: #111827; margin-bottom: 6px;">Masuk</h1>
-            <p style="color: #4b5563; font-size: 0.95rem;">Lanjutkan perjalanan kebugaran dan jaga streak latihanmu.</p>
+      <div class="login-split-container">
+        <!-- Kolom Kiri: Ilustrasi Hijau Gelap Sesuai login.png -->
+        <div class="login-left-pane">
+          <div class="login-left-logo">
+            <span class="flame-icon">🔥</span>
+            <span>FitStreak</span>
           </div>
 
-          <div class="auth-card" style="max-width: 440px;">
+          <div class="login-left-content">
+            <h1 class="login-left-heading">
+              Konsisten itu<br>dibangun tiap hari.
+            </h1>
+            <p class="login-left-text">
+              Catat latihan gym dan lari, pantau kalori bulking atau cutting, dan terima pengingat harian supaya streak kamu tidak putus.
+            </p>
+          </div>
+
+          <div class="login-left-pills">
+            <div class="login-pill">Streak harian</div>
+            <div class="login-pill">Pelacak kalori</div>
+            <div class="login-pill">Pengingat otomatis</div>
+          </div>
+        </div>
+
+        <!-- Kolom Kanan: Formulir Masuk Sesuai login.png -->
+        <div class="login-right-pane">
+          <div class="login-form-container">
+            <div style="margin-bottom: 28px;">
+              <h2 style="font-size: 2.2rem; font-weight: 700; color: #111827; margin-bottom: 8px;">Masuk</h2>
+              <p style="color: #64748b; font-size: 1rem;">Lanjutkan streak kamu hari ini.</p>
+            </div>
+
             <form id="login-form">
-              <div class="form-group">
-                <label class="form-label" for="login-email">Email</label>
-                <input type="email" id="login-email" class="form-input" placeholder="nama@email.com" value="nama@email.com" required />
+              <div class="form-group" style="margin-bottom: 20px;">
+                <label class="form-label" for="login-email" style="font-weight: 600; margin-bottom: 8px;">Email</label>
+                <input type="email" id="login-email" class="form-input" placeholder="nama@email.com" value="nama@email.com" required style="padding: 12px 16px; font-size: 0.95rem;" />
               </div>
 
-              <div class="form-group">
-                <label class="form-label" for="login-password">Kata sandi</label>
-                <input type="password" id="login-password" class="form-input" placeholder="Kata sandi" value="password123" required />
+              <div class="form-group" style="margin-bottom: 24px;">
+                <label class="form-label" for="login-password" style="font-weight: 600; margin-bottom: 8px;">Kata sandi</label>
+                <input type="password" id="login-password" class="form-input" placeholder="Minimal 8 karakter" value="password123" required style="padding: 12px 16px; font-size: 0.95rem;" />
               </div>
 
               <div id="login-error" style="color: #b91c1c; font-size: 0.9rem; margin-bottom: 16px; display: none;"></div>
 
-              <button type="submit" class="btn btn-primary btn-block" style="padding: 12px; font-size: 1rem; margin-bottom: 14px;">
+              <button type="submit" class="btn btn-primary btn-block" style="padding: 14px; font-size: 1.05rem; font-weight: 600; border-radius: var(--radius-md); margin-bottom: 18px;">
                 Masuk
               </button>
 
               <!-- Tombol Masuk Cepat untuk Pengujian / Demo -->
-              <div style="background-color: #f8fafc; border: 1px dashed var(--border-color); border-radius: var(--radius-md); padding: 14px; text-align: center; margin-top: 16px;">
-                <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 8px;">Uji Coba Cepat (Akun Demo Mahasiswa/Dosen):</p>
-                <button type="button" id="btn-quick-login" class="btn btn-outline btn-sm btn-block" style="border-color: var(--primary-green); color: var(--primary-green); font-weight: 600;">
+              <div style="background-color: #f1f5f9; border: 1px dashed var(--border-color); border-radius: var(--radius-md); padding: 12px; text-align: center; margin-bottom: 24px;">
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px;">Uji Coba Cepat (Akun Demo Mahasiswa/Dosen):</p>
+                <button type="button" id="btn-quick-login" class="btn btn-outline btn-sm btn-block" style="border-color: var(--primary-green); color: var(--primary-green); font-weight: 600; background: #ffffff;">
                   🚀 Masuk Cepat sebagai Rizwan
                 </button>
               </div>
             </form>
-          </div>
 
-          <div style="margin-top: 24px; text-align: center;">
-            <a href="#/register" style="color: var(--primary-green); font-weight: 600; font-size: 0.95rem;">Belum punya akun? Buat akun baru</a>
+            <div style="text-align: center; font-size: 0.95rem; color: #64748b;">
+              Belum punya akun? <a href="#/register" style="color: var(--primary-green); font-weight: 600; text-decoration: none;">Daftar</a>
+            </div>
           </div>
-        </main>
+        </div>
       </div>
     `;
 

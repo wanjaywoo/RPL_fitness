@@ -46,7 +46,7 @@ const CatalogView = {
       const secondaryBadges = secondaryList.map(m => `<span class="badge badge-secondary">${m}</span>`).join(' ');
 
       return `
-        <div class="exercise-card">
+        <div class="exercise-card" data-id="${ex.id}">
           <div class="exercise-thumb">${thumbSvg}</div>
           <div class="exercise-details">
             <h4 class="exercise-title">
@@ -92,13 +92,24 @@ const CatalogView = {
         </p>
         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
           ${cardioExercises.map(c => `
-            <span style="background: #f1f5f9; padding: 7px 16px; border-radius: 9999px; font-size: 0.88rem; font-weight: 500; color: var(--text-main);">
+            <a href="#/exercises/${c.id}" style="background: #f1f5f9; padding: 7px 18px; border-radius: 9999px; font-size: 0.88rem; font-weight: 500; color: var(--text-main); text-decoration: none; transition: background 0.15s;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">
               ${c.name}
-            </span>
+            </a>
           `).join('')}
         </div>
       </div>
     `;
+
+    // Pasang listener klik pada kartu gerakan untuk langsung membuka Tampilan Kelima
+    container.querySelectorAll('.exercise-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        // Jangan timpa jika pengguna mengklik tautan tombol secara spesifik
+        const id = card.getAttribute('data-id');
+        if (id) {
+          window.location.hash = `#/exercises/${id}`;
+        }
+      });
+    });
 
     // Pasang listener filter pills
     container.querySelectorAll('.pill-btn').forEach(btn => {

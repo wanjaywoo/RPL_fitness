@@ -418,12 +418,14 @@
   padding: 18px;
   display: flex;
   gap: 16px;
-  transition: transform 0.15s, box-shadow 0.15s;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
 }
 
 .exercise-card:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
+  border-color: var(--primary-green);
 }
 
 .exercise-thumb {

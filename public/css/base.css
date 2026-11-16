@@ -1,0 +1,72 @@
+/* public/css/base.css */
+/* Variabel tema dan reset dasar untuk PWA FitStreak */
+
+:root {
+  --primary-green: #1b633e;
+  --primary-green-hover: #144f31;
+  --sidebar-bg: #12231b;
+  --sidebar-active: #1d3d2f;
+  --text-main: #111827;
+  --text-secondary: #4b5563;
+  --text-muted: #6b7280;
+  --bg-app: #f4f6f8;
+  --card-bg: #ffffff;
+  --border-color: #e5e7eb;
+  --accent-orange: #ea580c;
+  --accent-flame: #f97316;
+  --badge-primary-bg: #ffedd5;
+  --badge-primary-text: #c2410c;
+  --badge-secondary-bg: #f3f4f6;
+  --badge-secondary-text: #4b5563;
+  --disclaimer-bg: #fff7ed;
+  --disclaimer-border: #fed7aa;
+  --disclaimer-text: #7c2d12;
+  --dark-card-bg: #12231b;
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+a {
+  color: var(--primary-green);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+input, select, textarea {
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
+img, svg {
+  vertical-align: middle;
+}

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#165b39">
+  <meta name="description" content="FitStreak - PWA untuk menghitung kalori Mifflin-St Jeor dan melacak streak olahraga harian">
+  <title>FitStreak - PWA Kebugaran & Pelacak Streak</title>
+  
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/svg+xml" href="/icons/icon.svg">
+  
+  <!-- Lembar Gaya CSS PWA -->
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar Kiri Sesuai Mockup Gambar (Warna Hijau Gelap #12231b) -->
+    <aside class="sidebar" id="app-sidebar">
+      <div class="sidebar-logo">
+        <span class="flame-icon">🔥</span>
+        <span>FitStreak</span>
+      </div>
+
+      <ul class="sidebar-menu">
+        <li class="sidebar-item active" data-page="dashboard">
+          <a href="#/dashboard">
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="sidebar-item" data-page="checkin">
+          <a href="#/checkin">
+            <span>Check-in harian</span>
+          </a>
+        </li>
+        <li class="sidebar-item" data-page="exercises">
+          <a href="#/catalog">
+            <span>Gerakan</span>
+          </a>
+        </li>
+        <li class="sidebar-item" data-page="routines">
+          <a href="#/routines">
+            <span>Rutinitas</span>
+          </a>
+        </li>
+        <li class="sidebar-item" data-page="target">
+          <a href="#/dashboard">
+            <span>Target saya</span>
+          </a>
+        </li>
+        <li class="sidebar-item" data-page="history">
+          <a href="#/dashboard">
+            <span>Riwayat</span>
+          </a>
+        </li>
+        <li class="sidebar-item" data-page="reminder">
+          <a href="#/dashboard">
+            <span>Pengingat</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <a href="#/login" id="btn-logout">Keluar</a>
+      </div>
+    </aside>
+
+    <!-- Kontainer Tampilan Utama -->
+    <main class="main-content" id="main-view">
+      <!-- Konten dinamis dirender di sini oleh JavaScript router -->
+    </main>
+
+    <!-- Navigasi Bawah Ponsel (Tampilan Mobile 360px) -->
+    <nav class="mobile-nav" id="mobile-nav">
+      <a href="#/dashboard" class="mobile-nav-item active" data-page="dashboard">
+        <span style="font-size: 1.1rem;">📊</span>
+        <span>Dashboard</span>
+      </a>
+      <a href="#/checkin" class="mobile-nav-item" data-page="checkin">
+        <span style="font-size: 1.1rem;">📝</span>
+        <span>Check-in</span>
+      </a>
+      <a href="#/catalog" class="mobile-nav-item" data-page="exercises">
+        <span style="font-size: 1.1rem;">💪</span>
+        <span>Gerakan</span>
+      </a>
+      <a href="#/routines" class="mobile-nav-item" data-page="routines">
+        <span style="font-size: 1.1rem;">📋</span>
+        <span>Rutinitas</span>
+      </a>
+    </nav>
+  </div>
+
+  <!-- Skrip JavaScript PWA Murni (Tanpa Bundler / Framework Eksternal) -->
+  <script src="/js/svgMuscle.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/authView.js"></script>
+  <script src="/js/dashboardView.js"></script>
+  <script src="/js/checkinView.js"></script>
+  <script src="/js/catalogView.js"></script>
+  <script src="/js/detailView.js"></script>
+  <script src="/js/routinesView.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

@@ -48,10 +48,13 @@ const CatalogView = {
     const cardsHtml = gridExercises.map(ex => {
       const primaryList = ex.primary_muscles ? ex.primary_muscles.split(', ') : [];
       const secondaryList = ex.secondary_muscles ? ex.secondary_muscles.split(', ') : [];
+      const isCardio = ex.is_cardio === 1 || ex.category === 'Kardio';
 
       const thumbSvg = SvgMuscleRenderer.renderThumbnail({
         primaryMuscles: primaryList,
-        secondaryMuscles: secondaryList
+        secondaryMuscles: secondaryList,
+        isCardio,
+        cardioName: ex.name
       });
 
       const primaryBadges = primaryList.map(m => `<span class="badge badge-primary">${m}</span>`).join(' ');

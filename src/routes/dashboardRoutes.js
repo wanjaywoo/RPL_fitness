@@ -11,6 +11,7 @@ const nutritionLogRepository = require('../repositories/nutritionLogRepository')
 const weightLogRepository = require('../repositories/weightLogRepository');
 const workoutRepository = require('../repositories/workoutRepository');
 const exerciseRepository = require('../repositories/exerciseRepository');
+const routineRepository = require('../repositories/routineRepository');
 const streakService = require('../services/streakService');
 const adaptiveService = require('../services/adaptiveService');
 const recommendationService = require('../services/recommendationService');
@@ -87,26 +88,48 @@ router.get('/', (req, res, next) => {
       };
     });
 
-    // 5. Tugas Hari Ini
+    // 5. Tugas Hari Ini (Disesuaikan secara dinamis dengan Rutinitas Aktif & Nutrisi)
+    const userRoutines = routineRepository.getByUserId(userId) || [];
+    const activeRoutine = userRoutines.length > 0 ? userRoutines[0] : { name: 'Push day', exercises: [] };
+
     const todayWorkouts = workoutRepository.getWorkoutsByDate(userId, todayDate);
-    const hasGymWorkout = todayWorkouts.some(w => w.activity_type.toLowerCase() === 'gym');
+    const hasGymWorkout = todayWorkouts.some(w => 
+      w.activity_type.toLowerCase() === 'gym' || 
+      (w.routine_name && w.routine_name.toLowerCase().includes(activeRoutine.name.toLowerCase()))
+    );
+
+    // Deteksi jika rutinitas aktif memiliki latihan kardio, atau gunakan Lari sebagai standar
+    const cardioInRoutine = activeRoutine.exercises ? activeRoutine.exercises.find(e => e.is_cardio) : null;
+    const cardioTitle = cardioInRoutine ? `${cardioInRoutine.name} 5 km` : 'Lari 5 km';
+    const hasCardioWorkout = todayWorkouts.some(w => 
+      w.activity_type.toLowerCase() === 'lari' || 
+      (cardioInRoutine && w.activity_type.toLowerCase() === cardioInRoutine.name.toLowerCase())
+    );
+
     const caloriesRemaining = Math.max(0, activeGoal.target_calories - todayNutrition.calories);
 
     const todayTasks = [
       {
-        title: 'Gym: Push day',
+        id: 'gym',
+        title: `Gym: ${activeRoutine.name}`,
         isCompleted: hasGymWorkout,
-        subtitle: hasGymWorkout ? `Selesai, ${todayWorkouts[0].duration_minutes} menit` : 'Belum dicatat'
+        subtitle: hasGymWorkout 
+          ? `Selesai, ${todayWorkouts[0].duration_minutes} menit` 
+          : 'Belum dicatat'
       },
       {
-        title: 'Lari 5 km',
-        isCompleted: todayWorkouts.some(w => w.activity_type.toLowerCase() === 'lari'),
-        subtitle: 'Belum dicatat'
+        id: 'cardio',
+        title: cardioTitle,
+        isCompleted: hasCardioWorkout,
+        subtitle: hasCardioWorkout ? 'Selesai' : 'Belum dicatat'
       },
       {
+        id: 'nutrition',
         title: 'Catat makan malam',
         isCompleted: caloriesRemaining === 0,
-        subtitle: caloriesRemaining > 0 ? `Sisa ${caloriesRemaining} kkal dari target` : 'Target kalori terpenuhi'
+        subtitle: caloriesRemaining > 0 
+          ? `Sisa ${caloriesRemaining} kkal dari target` 
+          : 'Target kalori terpenuhi'
       }
     ];
 
@@ -180,6 +203,11 @@ router.get('/', (req, res, next) => {
         target: activeGoal.target_calories
       },
       todayTasks,
+      activeRoutine: {
+        id: activeRoutine.id,
+        name: activeRoutine.name,
+        exercisesCount: activeRoutine.exercises ? activeRoutine.exercises.length : 0
+      },
       weekStatus,
       reminderInfo: 'Pengingat harian aktif pukul 19.00',
       adaptiveAdvice,

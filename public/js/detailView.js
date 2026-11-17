@@ -43,6 +43,17 @@ const DetailView = {
       </li>
     `).join('');
 
+    const isCardio = exercise.is_cardio === 1 || exercise.category === 'Kardio';
+    const cardioHeroHtml = isCardio ? `
+      <div style="background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%); border: 1px solid #fed7aa; border-radius: var(--radius-md); padding: 18px; text-align: center; margin-bottom: 16px; display: flex; align-items: center; justify-content: center; gap: 16px;">
+        ${SvgMuscleRenderer.renderCardioIllustration(exercise.name, 72, 72)}
+        <div style="text-align: left;">
+          <div style="font-size: 0.95rem; font-weight: 700; color: #9a3412;">Aktivitas Kardiorespirasi</div>
+          <div style="font-size: 0.82rem; color: #c2410c;">Meningkatkan detak jantung, sirkulasi darah, dan pembakaran kalori aktif</div>
+        </div>
+      </div>
+    ` : '';
+
     container.innerHTML = `
       <!-- Link Kembali ke Daftar Gerakan Sesuai Tampilan 5 -->
       <div style="margin-bottom: 16px;">
@@ -63,8 +74,10 @@ const DetailView = {
       <div class="two-col-grid" style="grid-template-columns: 1.1fr 1fr; align-items: start;">
         <!-- Kolom Kiri: Ilustrasi Anatomi Otot Vektor (DEPAN dan BELAKANG) -->
         <div class="card">
-          <h3 class="card-title">Otot yang dilatih</h3>
+          <h3 class="card-title">${isCardio ? 'Keterlibatan Otot & Kardio' : 'Otot yang dilatih'}</h3>
           
+          ${cardioHeroHtml}
+
           <div style="background-color: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px; text-align: center; margin-bottom: 18px;">
             ${anatomySvg}
           </div>

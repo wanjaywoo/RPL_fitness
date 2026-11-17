@@ -26,12 +26,12 @@ const DetailView = {
       .filter(m => m.is_primary === 0)
       .map(m => m.muscle_name);
 
-    // Render diagram anatomi tubuh depan dan belakang
+    // Render diagram anatomi tubuh depan dan belakang persis tampilan ke lima.png
     const anatomySvg = SvgMuscleRenderer.renderBodyDiagram({
       primaryMuscles,
       secondaryMuscles,
-      width: 280,
-      height: 290,
+      width: 320,
+      height: 330,
       showBoth: true
     });
 
@@ -42,17 +42,6 @@ const DetailView = {
         ${step}
       </li>
     `).join('');
-
-    const isCardio = exercise.is_cardio === 1 || exercise.category === 'Kardio';
-    const cardioHeroHtml = isCardio ? `
-      <div style="background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%); border: 1px solid #fed7aa; border-radius: var(--radius-md); padding: 18px; text-align: center; margin-bottom: 16px; display: flex; align-items: center; justify-content: center; gap: 16px;">
-        ${SvgMuscleRenderer.renderCardioIllustration(exercise.name, 72, 72)}
-        <div style="text-align: left;">
-          <div style="font-size: 0.95rem; font-weight: 700; color: #9a3412;">Aktivitas Kardiorespirasi</div>
-          <div style="font-size: 0.82rem; color: #c2410c;">Meningkatkan detak jantung, sirkulasi darah, dan pembakaran kalori aktif</div>
-        </div>
-      </div>
-    ` : '';
 
     container.innerHTML = `
       <!-- Link Kembali ke Daftar Gerakan Sesuai Tampilan 5 -->
@@ -72,13 +61,11 @@ const DetailView = {
 
       <!-- Layout 2-Kolom Sesuai Mockup 5 -->
       <div class="two-col-grid" style="grid-template-columns: 1.1fr 1fr; align-items: start;">
-        <!-- Kolom Kiri: Ilustrasi Anatomi Otot Vektor (DEPAN dan BELAKANG) -->
+        <!-- Kolom Kiri: Ilustrasi Anatomi Otot Vektor (DEPAN dan BELAKANG Berdampingan Sesuai Tampilan 5) -->
         <div class="card">
-          <h3 class="card-title">${isCardio ? 'Keterlibatan Otot & Kardio' : 'Otot yang dilatih'}</h3>
+          <h3 class="card-title">Otot yang dilatih</h3>
           
-          ${cardioHeroHtml}
-
-          <div style="background-color: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px; text-align: center; margin-bottom: 18px;">
+          <div style="background-color: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 24px 16px; text-align: center; margin-bottom: 18px;">
             ${anatomySvg}
           </div>
 

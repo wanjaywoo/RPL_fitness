@@ -429,8 +429,8 @@
 }
 
 .exercise-thumb {
-  width: 68px;
-  height: 80px;
+  width: 86px;
+  height: 82px;
   flex-shrink: 0;
   background-color: #f8fafc;
   border: 1px solid var(--border-color);

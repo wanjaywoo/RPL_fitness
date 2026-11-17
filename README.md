@@ -115,6 +115,22 @@ Buka browser (Google Chrome atau Microsoft Edge) dan akses:
 
 Untuk menguji fitur PWA, klik ikon **Install FitStreak** pada bilah alamat browser untuk memasang aplikasi ke desktop/layar utama Windows.
 
+### 🌐 Daftar Lengkap URL Halaman Aplikasi (Localhost)
+| URL Halaman | Menu / Fitur | Deskripsi |
+|---|---|---|
+| [http://localhost:3000/#/dashboard](http://localhost:3000/#/dashboard) | **Dashboard Utama** | Ringkasan streak, skor konsistensi mingguan, kalori BMR & TDEE, alokasi makro, dan tren berat. |
+| [http://localhost:3000/#/checkin](http://localhost:3000/#/checkin) | **Check-in Latihan** | Form log latihan 10-300 menit, checklist gerakan rutinitas harian, dan log nutrisi harian. |
+| [http://localhost:3000/#/catalog](http://localhost:3000/#/catalog) | **Katalog Gerakan** | 24 gerakan latihan terstruktur, filter kategori (Dada, Kardio, dll.), dan tambah ke rutinitas. |
+| [http://localhost:3000/#/exercises/19](http://localhost:3000/#/exercises/19) | **Detail Gerakan (Kardio)** | Ilustrasi anatomi SVG otot dan gambaran manfaat kardio (jantung, paru VO2 Max, stamina). |
+| [http://localhost:3000/#/exercises/1](http://localhost:3000/#/exercises/1) | **Detail Gerakan (Beban)** | Ilustrasi anatomi SVG otot dan teks manfaat latihan kekuatan (hipertrofi, tulang & sendi). |
+| [http://localhost:3000/#/routines](http://localhost:3000/#/routines) | **Kelola Rutinitas** | Tab multi-rutinitas, daftar gerakan latihan aktif, estimasi durasi, dan hapus/tambah gerakan. |
+| [http://localhost:3000/#/target](http://localhost:3000/#/target) | **Sasaran Kalori & Makro** | Target program (Bulking / Cutting / Maintenance), batas keselamatan kalori server, dan makro. |
+| [http://localhost:3000/#/history](http://localhost:3000/#/history) | **Riwayat Aktivitas** | Log riwayat aktivitas sesuai mockup, filter 7/30 hari, filter Gym/Lari/Istirahat, dan paginasi. |
+| [http://localhost:3000/#/reminder](http://localhost:3000/#/reminder) | **Pengingat Latihan** | Pengaturan jam pengingat harian, preset jam cepat, tombol uji lonceng Web Audio API. |
+| [http://localhost:3000/#/profile](http://localhost:3000/#/profile) | **Profil & Pengaturan** | Ringkasan data akun, pembaruan berat badan terbaru (tren adaptif), status target, dan logout. |
+| [http://localhost:3000/#/login](http://localhost:3000/#/login) | **Masuk (Login)** | Formulir otentikasi login pengguna dengan validasi keamanan sesi dan token. |
+| [http://localhost:3000/#/register](http://localhost:3000/#/register) | **Daftar Akun Baru** | Formulir registrasi 9 data fisik dengan penegakan batas usia minimal 18 tahun (BR-09). |
+
 ---
 
 ## 🧪 Pengujian & Jaminan Mutu (Testing & Quality Assurance)
@@ -132,9 +148,9 @@ npm run test:coverage
 ```
 
 ### Hasil Nyata Pengujian (100% Lulus / Hijau):
-- **Test Suites**: 10 passed, 10 total
-- **Tests**: 41 passed, 41 total (Mencakup 100% dari TC-01 s/d TC-26)
-- **Lines Coverage**: **73.51%** (Melampaui target syarat $\ge 65\%$)
+- **Test Suites**: 11 passed, 11 total
+- **Tests**: 49 passed, 49 total (Mencakup 100% dari TC-01 s/d TC-26 dan RIW-01 s/d RIW-08)
+- **Lines Coverage**: **74.04%** (Melampaui target syarat $\ge 65\%$)
 
 | Berkas Pengujian | Skenario Uji | Status |
 |---|---|---|
@@ -146,6 +162,7 @@ npm run test:coverage
 | `tests/time.test.js` | TC-19..TC-20: Waktu UTC ke Lokal Asia/Jakarta & Awal Minggu Senin | ✅ LULUS |
 | `tests/reminder.test.js` | TC-21..TC-22: Evaluasi Pengingat Harian (Jam Pengguna, Hari Terjadwal, Belum Checkin) | ✅ LULUS |
 | `tests/api.test.js` | TC-23..TC-24: Profil & Target BR-09, FR-01..03, Dashboard Agregasi, & Admin 403 (BR-13) | ✅ LULUS |
+| `tests/history.test.js` | RIW-01..RIW-08: Periode 7/30 Hari, Sesi Ganda, Filter Aktivitas, Avg Kalori, Paginasi | ✅ LULUS |
 | `tests/recommendation.test.js` | TC-25..TC-26: Rekomendasi Split (Full Body/Upper-Lower/PPL) & Deteksi Otot Tertinggal | ✅ LULUS |
 | `tests/pwa.test.js` | NFR-07: Validitas Manifest PWA, Service Worker Cache, & Generator SVG Otot Orisinal | ✅ LULUS |
 

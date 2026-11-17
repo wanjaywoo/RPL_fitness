@@ -46,29 +46,30 @@ const DashboardView = {
     const calPercent = Math.min(100, Math.round((caloriesToday.consumed / caloriesToday.target) * 100));
     const calRemaining = Math.max(0, caloriesToday.target - caloriesToday.consumed);
 
-    // 1. Render Kalender 7 Hari Minggu Ini (Tema Hijau Zamrud Elegan)
+    // 1. Render Kalender 7 Hari Minggu Ini (Tema Hijau Zamrud Solid Penuh)
     const weekCirclesHtml = weekStatus.map(w => {
-      let circleStyle = 'width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; transition: all 0.2s ease;';
+      let circleStyle = 'width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px; transition: all 0.2s ease;';
       let content = '';
 
-      if (w.status === 'completed' || w.isCheckedIn) {
-        circleStyle += 'background: #166534; color: #ffffff; box-shadow: 0 2px 4px rgba(22, 101, 52, 0.2);';
+      // Tentukan apakah hari ini bagian dari rangkaian streak / latihan aktif minggu ini
+      const isStreakCompleted = w.status === 'completed' || w.isCheckedIn || w.status === 'today';
+
+      if (isStreakCompleted) {
+        // Full in ijo solid sesuai permintaan pengguna
+        circleStyle += 'background: #166534; color: #ffffff; box-shadow: 0 2px 6px rgba(22, 101, 52, 0.25); border: 1.5px solid #14532d;';
         content = '✓';
-      } else if (w.status === 'today') {
-        circleStyle += 'background: #ffffff; color: #166534; border: 2.5px solid #166534; box-shadow: 0 0 0 3px rgba(22, 101, 52, 0.15); font-weight: 800;';
-        content = '•';
       } else if (w.status === 'rest') {
         circleStyle += 'background: #f1f5f9; color: #94a3b8; border: 1px dashed #cbd5e1;';
         content = '-';
       } else {
-        circleStyle += 'background: #f8fafc; color: #94a3b8; border: 1px solid #e2e8f0;';
+        circleStyle += 'background: #f8fafc; color: #cbd5e1; border: 1px solid #e2e8f0;';
         content = '';
       }
 
       return `
         <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
           <div style="${circleStyle}">${content}</div>
-          <span style="font-size: 0.82rem; font-weight: ${w.status === 'today' ? '700' : '500'}; color: ${w.status === 'today' ? '#166534' : '#64748b'};">${w.name}</span>
+          <span style="font-size: 0.82rem; font-weight: ${isStreakCompleted ? '700' : '500'}; color: ${isStreakCompleted ? '#166534' : '#64748b'};">${w.name}</span>
         </div>
       `;
     }).join('');

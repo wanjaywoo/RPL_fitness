@@ -1,17 +1,17 @@
 // public/js/svgMuscle.js
 // Generator ilustrasi vektor orisinal anatomi tubuh manusia DEPAN dan BELAKANG
+// Memiliki garis siluet kulit tubuh luar yang utuh (skin contour outline) dan otot terdefinisi di dalamnya
 // 100% Mengikuti rancangan resmi "tampilan ke lima.png"
-// Menghasilkan warna oranye (#ea580c) untuk otot utama dan peach (#fed7aa) untuk otot pendukung
 
 const SvgMuscleRenderer = {
   /**
-   * Menghasilkan elemen SVG tubuh manusia depan dan belakang berdampingan persis sesuai tampilan ke lima.png
+   * Menghasilkan elemen SVG tubuh manusia lengkap dengan garis siluet kulit luar tampak DEPAN dan BELAKANG
    * @param {Object} options
-   * @param {Array<string>} options.primaryMuscles - Nama-nama otot utama
-   * @param {Array<string>} options.secondaryMuscles - Nama-nama otot pendukung
+   * @param {Array<string>} options.primaryMuscles - Nama-nama otot utama (Oranye #ea580c)
+   * @param {Array<string>} options.secondaryMuscles - Nama-nama otot pendukung (Peach #fed7aa)
    * @param {number} [options.width=320]
    * @param {number} [options.height=320]
-   * @param {boolean} [options.showBoth=true] - Menampilkan tampak DEPAN dan BELAKANG
+   * @param {boolean} [options.showBoth=true]
    * @returns {string} string HTML SVG
    */
   renderBodyDiagram({ primaryMuscles = [], secondaryMuscles = [], width = 320, height = 320, showBoth = true }) {
@@ -26,9 +26,9 @@ const SvgMuscleRenderer = {
     };
 
     const getColor = (muscleName) => {
-      if (isPrimary(muscleName)) return '#ea580c'; // Oranye pekat (Otot utama sesuai mockup 5)
-      if (isSecondary(muscleName)) return '#fed7aa'; // Peach lembut (Otot pendukung sesuai mockup 5)
-      return '#eaedf0'; // Abu-abu netral terdefinisi
+      if (isPrimary(muscleName)) return '#ea580c'; // Oranye pekat (Otot utama sesuai tampilan ke lima)
+      if (isSecondary(muscleName)) return '#fed7aa'; // Peach lembut (Otot pendukung sesuai tampilan ke lima)
+      return '#eaedf0'; // Abu-abu serat otot netral
     };
 
     // Warna masing-masing kelompok otot
@@ -44,111 +44,148 @@ const SvgMuscleRenderer = {
     const cGlutes = getColor('bokong');
     const cCalves = getColor('betis') !== '#eaedf0' ? getColor('betis') : getColor('kaki');
 
-    const strokeColor = '#94a3b8';
-    const strokeWidth = '1';
+    const skinOutlineColor = '#94a3b8'; // Garis luar siluet kulit
+    const skinFill = '#f8fafc'; // Warna dasar kulit manusia
+    const muscleLineColor = '#94a3b8'; // Garis sekat anatomi otot
 
-    // 1. Figur Tubuh Posisi DEPAN (Kiri)
+    // 1. FIGUR TAMPAK DEPAN (Dengan Garis Kulit Luar Utuh & Otot di Dalamnya)
     const frontSvg = `
       <g transform="translate(10, 10)">
-        <!-- Kepala & Leher -->
-        <ellipse cx="50" cy="22" rx="10" ry="12" fill="#eaedf0" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
-        <path d="M46 33 L45 42 L55 42 L54 33 Z" fill="#eaedf0" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
+        <!-- LAPISAN 1: GARIS SILUET KULIT TUBUH LUAR UTUH (DEPAN) -->
+        <!-- Garis Kulit Lengan Kiri Luar & Dalam -->
+        <path d="M 36 40 C 26 40 18 46 17 56 C 16 66 14 80 14 96 C 14 104 16 112 18 116 C 19 118 22 118 23 116 C 25 111 25 104 25 96 C 26 84 27 74 29 65 C 30 60 32 58 35 56 Z" 
+              fill="${skinFill}" stroke="${skinOutlineColor}" stroke-width="1.2" stroke-linejoin="round"/>
+        
+        <!-- Garis Kulit Lengan Kanan Luar & Dalam -->
+        <path d="M 64 40 C 74 40 82 46 83 56 C 84 66 86 80 86 96 C 86 104 84 112 82 116 C 81 118 78 118 77 116 C 75 111 75 104 75 96 C 74 84 73 74 71 65 C 70 60 68 58 65 56 Z" 
+              fill="${skinFill}" stroke="${skinOutlineColor}" stroke-width="1.2" stroke-linejoin="round"/>
 
+        <!-- Garis Kulit Batang Tubuh, Pinggang, Selangkangan, dan Kedua Kaki Luar & Dalam -->
+        <path d="M 44 32 L 44 40 C 37 40 33 46 32 58 C 31 70 33 82 31 98 C 29 112 28 132 30 156 C 31 166 31 180 32 196 C 32 204 33 210 29 214 C 28 215 31 216 35 216 C 41 216 43 214 43 208 C 44 196 44 182 44 168 C 45 156 46 140 46 122 C 46 112 47 106 50 102 C 53 106 54 112 54 122 C 54 140 55 156 56 168 C 56 182 56 196 57 208 C 57 214 59 216 65 216 C 69 216 72 215 71 214 C 67 210 68 204 68 196 C 69 180 69 166 70 156 C 72 132 71 112 69 98 C 67 82 69 70 68 58 C 67 46 63 40 56 40 L 56 32 Z" 
+              fill="${skinFill}" stroke="${skinOutlineColor}" stroke-width="1.2" stroke-linejoin="round"/>
+
+        <!-- Garis Kulit Kepala & Leher -->
+        <ellipse cx="50" cy="19" rx="10.5" ry="12.5" fill="${skinFill}" stroke="${skinOutlineColor}" stroke-width="1.2"/>
+        <line x1="45" y1="31" x2="45" y2="39" stroke="${skinOutlineColor}" stroke-width="1.2"/>
+        <line x1="55" y1="31" x2="55" y2="39" stroke="${skinOutlineColor}" stroke-width="1.2"/>
+
+        <!-- LAPISAN 2: BLOK ANATOMI OTOT DI DALAM GARIS KULIT (DEPAN) -->
         <!-- Bahu Deltoid Kiri & Kanan -->
-        <path d="M37 42 C29 42 22 47 21 56 C20 62 25 65 30 65 L35 52 Z" fill="${cShoulders}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
-        <path d="M63 42 C71 42 78 47 79 56 C80 62 75 65 70 65 L65 52 Z" fill="${cShoulders}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
+        <path d="M 36 41 C 28 41 21 46 20 54 C 20 59 24 63 28 63 L 34 51 Z" 
+              fill="${cShoulders}" stroke="${muscleLineColor}" stroke-width="1"/>
+        <path d="M 64 41 C 72 41 79 46 80 54 C 80 59 76 63 72 63 L 66 51 Z" 
+              fill="${cShoulders}" stroke="${muscleLineColor}" stroke-width="1"/>
 
-        <!-- Dada Pectoralis Kiri & Kanan dengan Garis Serat (Striations) -->
-        <path d="M37 44 C44 44 49 48 49 56 C49 64 41 67 34 67 C28 67 30 55 37 44 Z" fill="${cChest}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
-        <path d="M63 44 C56 44 51 48 51 56 C51 64 59 67 66 67 C72 67 70 55 63 44 Z" fill="${cChest}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
-        <line x1="37" y1="52" x2="48" y2="52" stroke="${strokeColor}" stroke-width="0.8" opacity="0.6"/>
-        <line x1="36" y1="58" x2="48" y2="58" stroke="${strokeColor}" stroke-width="0.8" opacity="0.6"/>
-        <line x1="63" y1="52" x2="52" y2="52" stroke="${strokeColor}" stroke-width="0.8" opacity="0.6"/>
-        <line x1="64" y1="58" x2="52" y2="58" stroke="${strokeColor}" stroke-width="0.8" opacity="0.6"/>
+        <!-- Dada Pectoralis Kiri & Kanan Bersekat Serat -->
+        <path d="M 37 43 C 44 43 49 47 49 55 C 49 63 42 66 35 66 C 29 66 31 54 37 43 Z" 
+              fill="${cChest}" stroke="${muscleLineColor}" stroke-width="1"/>
+        <path d="M 63 43 C 56 43 51 47 51 55 C 51 63 58 66 65 66 C 71 66 69 54 63 43 Z" 
+              fill="${cChest}" stroke="${muscleLineColor}" stroke-width="1"/>
+        <line x1="38" y1="51" x2="48" y2="51" stroke="${muscleLineColor}" stroke-width="0.8" opacity="0.5"/>
+        <line x1="37" y1="57" x2="48" y2="57" stroke="${muscleLineColor}" stroke-width="0.8" opacity="0.5"/>
+        <line x1="62" y1="51" x2="52" y2="51" stroke="${muscleLineColor}" stroke-width="0.8" opacity="0.5"/>
+        <line x1="63" y1="57" x2="52" y2="57" stroke="${muscleLineColor}" stroke-width="0.8" opacity="0.5"/>
 
         <!-- Lengan Atas Bisep -->
-        <path d="M21 59 C17 65 16 75 20 83 L26 81 C27 74 27 66 24 59 Z" fill="${cBiceps}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
-        <path d="M79 59 C83 65 84 75 80 83 L74 81 C73 74 73 66 76 59 Z" fill="${cBiceps}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
-
-        <!-- Lengan Bawah & Tangan -->
-        <path d="M20 83 C16 91 15 102 18 111 L23 109 C25 101 26 91 26 83 Z" fill="#eaedf0" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
-        <path d="M80 83 C84 91 85 102 82 111 L77 109 C75 101 74 91 74 83 Z" fill="#eaedf0" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
-        <circle cx="19" cy="115" r="3.5" fill="#eaedf0" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
-        <circle cx="81" cy="115" r="3.5" fill="#eaedf0" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
+        <path d="M 21 58 C 17 64 16 73 19 80 L 25 78 C 26 71 26 64 24 58 Z" 
+              fill="${cBiceps}" stroke="${muscleLineColor}" stroke-width="1"/>
+        <path d="M 79 58 C 83 64 84 73 81 80 L 75 78 C 74 71 74 64 76 58 Z" 
+              fill="${cBiceps}" stroke="${muscleLineColor}" stroke-width="1"/>
 
         <!-- Otot Perut (Six-pack Abs Bersekat Sesuai Tampilan 5) -->
-        <path d="M42 69 L58 69 L56 100 L44 100 Z" fill="${cAbs}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
-        <line x1="50" y1="69" x2="50" y2="100" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
-        <line x1="43" y1="78" x2="57" y2="78" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
-        <line x1="43" y1="88" x2="57" y2="88" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
+        <path d="M 43 68 L 57 68 L 55 98 L 45 98 Z" 
+              fill="${cAbs}" stroke="${muscleLineColor}" stroke-width="1"/>
+        <line x1="50" y1="68" x2="50" y2="98" stroke="${muscleLineColor}" stroke-width="1"/>
+        <line x1="44" y1="78" x2="56" y2="78" stroke="${muscleLineColor}" stroke-width="1"/>
+        <line x1="44" y1="88" x2="56" y2="88" stroke="${muscleLineColor}" stroke-width="1"/>
 
         <!-- Paha Depan Quadriceps (Bersekat Anatomis Sesuai Mockup 5) -->
-        <path d="M37 103 C31 118 30 138 35 158 C38 160 46 159 48 156 C49 137 48 117 46 103 Z" fill="${cQuads}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
-        <path d="M63 103 C69 118 70 138 65 158 C62 160 54 159 52 156 C51 137 52 117 54 103 Z" fill="${cQuads}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
-        <line x1="41" y1="108" x2="42" y2="152" stroke="${strokeColor}" stroke-width="0.8" opacity="0.6"/>
-        <line x1="59" y1="108" x2="58" y2="152" stroke="${strokeColor}" stroke-width="0.8" opacity="0.6"/>
+        <path d="M 36 102 C 31 117 31 137 34 154 C 38 156 45 155 47 152 C 48 135 47 116 45 102 Z" 
+              fill="${cQuads}" stroke="${muscleLineColor}" stroke-width="1"/>
+        <path d="M 64 102 C 69 117 69 137 66 154 C 62 156 55 155 53 152 C 52 135 53 116 55 102 Z" 
+              fill="${cQuads}" stroke="${muscleLineColor}" stroke-width="1"/>
+        <line x1="40" y1="108" x2="41" y2="150" stroke="${muscleLineColor}" stroke-width="0.8" opacity="0.6"/>
+        <line x1="60" y1="108" x2="59" y2="150" stroke="${muscleLineColor}" stroke-width="0.8" opacity="0.6"/>
 
-        <!-- Lutut -->
-        <circle cx="41" cy="163" r="3.5" fill="#eaedf0" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
-        <circle cx="59" cy="163" r="3.5" fill="#eaedf0" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
+        <!-- Tempurung Lutut -->
+        <circle cx="41" cy="159" r="3.2" fill="${skinFill}" stroke="${muscleLineColor}" stroke-width="1"/>
+        <circle cx="59" cy="159" r="3.2" fill="${skinFill}" stroke="${muscleLineColor}" stroke-width="1"/>
 
-        <!-- Betis Depan & Kaki -->
-        <path d="M38 169 C33 180 34 198 38 208 L45 208 C46 198 46 181 44 169 Z" fill="${cCalves}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
-        <path d="M62 169 C67 180 66 198 62 208 L55 208 C54 198 54 181 56 169 Z" fill="${cCalves}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
-        <path d="M35 209 L46 209 C46 213 41 215 34 214 Z" fill="#eaedf0" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
-        <path d="M65 209 L54 209 C54 213 59 215 66 214 Z" fill="#eaedf0" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
+        <!-- Betis Depan -->
+        <path d="M 37 165 C 33 176 34 194 37 204 L 43 204 C 44 194 44 177 42 165 Z" 
+              fill="${cCalves}" stroke="${muscleLineColor}" stroke-width="1"/>
+        <path d="M 63 165 C 67 176 66 194 63 204 L 57 204 C 56 194 56 177 58 165 Z" 
+              fill="${cCalves}" stroke="${muscleLineColor}" stroke-width="1"/>
 
         <!-- Label Teks DEPAN Sesuai Tampilan 5 -->
         <text x="50" y="235" font-size="9.5" fill="#64748b" font-weight="600" text-anchor="middle" letter-spacing="1">DEPAN</text>
       </g>
     `;
 
-    // 2. Figur Tubuh Posisi BELAKANG (Kanan)
+    // 2. FIGUR TAMPAK BELAKANG (Dengan Garis Kulit Luar Utuh & Otot di Dalamnya)
     const backSvg = `
       <g transform="translate(130, 10)">
-        <!-- Kepala Belakang & Leher -->
-        <ellipse cx="50" cy="22" rx="10" ry="12" fill="#eaedf0" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
-        <path d="M46 33 L45 42 L55 42 L54 33 Z" fill="#eaedf0" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
+        <!-- LAPISAN 1: GARIS SILUET KULIT TUBUH LUAR UTUH (BELAKANG) -->
+        <!-- Garis Kulit Lengan Kiri Luar & Dalam -->
+        <path d="M 36 40 C 26 40 18 46 17 56 C 16 66 14 80 14 96 C 14 104 16 112 18 116 C 19 118 22 118 23 116 C 25 111 25 104 25 96 C 26 84 27 74 29 65 C 30 60 32 58 35 56 Z" 
+              fill="${skinFill}" stroke="${skinOutlineColor}" stroke-width="1.2" stroke-linejoin="round"/>
+        
+        <!-- Garis Kulit Lengan Kanan Luar & Dalam -->
+        <path d="M 64 40 C 74 40 82 46 83 56 C 84 66 86 80 86 96 C 86 104 84 112 82 116 C 81 118 78 118 77 116 C 75 111 75 104 75 96 C 74 84 73 74 71 65 C 70 60 68 58 65 56 Z" 
+              fill="${skinFill}" stroke="${skinOutlineColor}" stroke-width="1.2" stroke-linejoin="round"/>
 
+        <!-- Garis Kulit Batang Tubuh, Bokong, dan Kaki Belakang -->
+        <path d="M 44 32 L 44 40 C 37 40 33 46 32 58 C 31 70 33 82 31 98 C 29 112 28 132 30 156 C 31 166 31 180 32 196 C 32 204 33 210 29 214 C 28 215 31 216 35 216 C 41 216 43 214 43 208 C 44 196 44 182 44 168 C 45 156 46 140 46 122 C 46 112 47 106 50 102 C 53 106 54 112 54 122 C 54 140 55 156 56 168 C 56 182 56 196 57 208 C 57 214 59 216 65 216 C 69 216 72 215 71 214 C 67 210 68 204 68 196 C 69 180 69 166 70 156 C 72 132 71 112 69 98 C 67 82 69 70 68 58 C 67 46 63 40 56 40 L 56 32 Z" 
+              fill="${skinFill}" stroke="${skinOutlineColor}" stroke-width="1.2" stroke-linejoin="round"/>
+
+        <!-- Garis Kulit Kepala Belakang & Leher -->
+        <ellipse cx="50" cy="19" rx="10.5" ry="12.5" fill="${skinFill}" stroke="${skinOutlineColor}" stroke-width="1.2"/>
+        <line x1="45" y1="31" x2="45" y2="39" stroke="${skinOutlineColor}" stroke-width="1.2"/>
+        <line x1="55" y1="31" x2="55" y2="39" stroke="${skinOutlineColor}" stroke-width="1.2"/>
+
+        <!-- LAPISAN 2: BLOK ANATOMI OTOT DI DALAM GARIS KULIT (BELAKANG) -->
         <!-- Trapezius Punggung Atas -->
-        <path d="M37 42 C44 45 56 45 63 42 L58 59 C54 60 46 60 42 59 Z" fill="${cTraps}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
+        <path d="M 37 41 C 44 44 56 44 63 41 L 58 58 C 54 59 46 59 42 58 Z" 
+              fill="${cTraps}" stroke="${muscleLineColor}" stroke-width="1"/>
 
         <!-- Sayap Punggung Latissimus Dorsi (V-Taper) -->
-        <path d="M34 49 C28 57 31 71 38 79 L47 79 L47 59 Z" fill="${cBack}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
-        <path d="M66 49 C72 57 69 71 62 79 L53 79 L53 59 Z" fill="${cBack}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
-        <line x1="50" y1="45" x2="50" y2="88" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
+        <path d="M 34 48 C 28 56 31 70 38 78 L 47 78 L 47 58 Z" 
+              fill="${cBack}" stroke="${muscleLineColor}" stroke-width="1"/>
+        <path d="M 66 48 C 72 56 69 70 62 78 L 53 78 L 53 58 Z" 
+              fill="${cBack}" stroke="${muscleLineColor}" stroke-width="1"/>
+        <line x1="50" y1="44" x2="50" y2="86" stroke="${muscleLineColor}" stroke-width="1"/>
 
         <!-- Bahu Belakang (Rear Delts) -->
-        <path d="M34 42 C27 46 22 52 22 59 C27 63 32 58 34 51 Z" fill="${cShoulders}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
-        <path d="M66 42 C73 46 78 52 78 59 C73 63 68 58 66 51 Z" fill="${cShoulders}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
+        <path d="M 34 41 C 27 45 22 51 22 58 C 27 62 32 57 34 50 Z" 
+              fill="${cShoulders}" stroke="${muscleLineColor}" stroke-width="1"/>
+        <path d="M 66 41 C 73 45 78 51 78 58 C 73 62 68 57 66 50 Z" 
+              fill="${cShoulders}" stroke="${muscleLineColor}" stroke-width="1"/>
 
         <!-- Trisep Lengan Belakang -->
-        <path d="M21 59 C17 67 17 77 21 83 L26 81 C26 73 26 65 24 59 Z" fill="${cTriceps}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
-        <path d="M79 59 C83 67 83 77 79 83 L74 81 C74 73 74 65 76 59 Z" fill="${cTriceps}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
-
-        <!-- Lengan Bawah Belakang -->
-        <path d="M20 83 C16 91 15 102 18 111 L23 109 C25 101 26 91 26 83 Z" fill="#eaedf0" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
-        <path d="M80 83 C84 91 85 102 82 111 L77 109 C75 101 74 91 74 83 Z" fill="#eaedf0" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
-        <circle cx="19" cy="115" r="3.5" fill="#eaedf0" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
-        <circle cx="81" cy="115" r="3.5" fill="#eaedf0" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
+        <path d="M 21 58 C 17 66 17 76 21 82 L 26 80 C 26 72 26 64 24 58 Z" 
+              fill="${cTriceps}" stroke="${muscleLineColor}" stroke-width="1"/>
+        <path d="M 79 58 C 83 66 83 76 79 82 L 74 80 C 74 72 74 64 76 58 Z" 
+              fill="${cTriceps}" stroke="${muscleLineColor}" stroke-width="1"/>
 
         <!-- Bokong Gluteus Maximus Kiri & Kanan -->
-        <path d="M36 88 C30 96 32 109 48 109 L48 88 Z" fill="${cGlutes}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
-        <path d="M64 88 C70 96 68 109 52 109 L52 88 Z" fill="${cGlutes}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
+        <path d="M 35 87 C 30 95 32 108 48 108 L 48 87 Z" 
+              fill="${cGlutes}" stroke="${muscleLineColor}" stroke-width="1"/>
+        <path d="M 65 87 C 70 95 68 108 52 108 L 52 87 Z" 
+              fill="${cGlutes}" stroke="${muscleLineColor}" stroke-width="1"/>
 
         <!-- Paha Belakang Hamstrings (Bersekat Sesuai Tampilan 5) -->
-        <path d="M35 111 C30 126 31 145 36 158 C40 160 46 158 47 155 C46 139 46 123 47 111 Z" fill="${cHamstrings}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
-        <path d="M65 111 C70 126 69 145 64 158 C60 160 54 158 53 155 C54 139 54 123 53 111 Z" fill="${cHamstrings}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
-        <line x1="41" y1="114" x2="42" y2="152" stroke="${strokeColor}" stroke-width="0.8" opacity="0.6"/>
-        <line x1="59" y1="114" x2="58" y2="152" stroke="${strokeColor}" stroke-width="0.8" opacity="0.6"/>
+        <path d="M 35 110 C 30 125 31 144 36 156 C 40 158 46 156 47 153 C 46 137 46 121 47 110 Z" 
+              fill="${cHamstrings}" stroke="${muscleLineColor}" stroke-width="1"/>
+        <path d="M 65 110 C 70 125 69 144 64 156 C 60 158 54 156 53 153 C 54 137 54 121 53 110 Z" 
+              fill="${cHamstrings}" stroke="${muscleLineColor}" stroke-width="1"/>
+        <line x1="41" y1="113" x2="42" y2="150" stroke="${muscleLineColor}" stroke-width="0.8" opacity="0.6"/>
+        <line x1="59" y1="113" x2="58" y2="150" stroke="${muscleLineColor}" stroke-width="0.8" opacity="0.6"/>
 
         <!-- Betis Belakang Calves Gastrocnemius Berbentuk Khas -->
-        <path d="M36 168 C29 178 30 198 37 208 L45 208 C46 197 46 180 44 168 Z" fill="${cCalves}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
-        <path d="M64 168 C71 178 70 198 63 208 L55 208 C54 197 54 180 56 168 Z" fill="${cCalves}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
-
-        <!-- Tumit Kaki -->
-        <path d="M36 209 L46 209 C46 213 42 215 37 214 Z" fill="#eaedf0" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
-        <path d="M64 209 L54 209 C54 213 58 215 63 214 Z" fill="#eaedf0" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
+        <path d="M 36 166 C 29 176 30 196 37 206 L 43 206 C 44 195 44 178 42 166 Z" 
+              fill="${cCalves}" stroke="${muscleLineColor}" stroke-width="1"/>
+        <path d="M 64 166 C 71 176 70 196 63 206 L 57 206 C 56 195 56 178 58 166 Z" 
+              fill="${cCalves}" stroke="${muscleLineColor}" stroke-width="1"/>
 
         <!-- Label Teks BELAKANG Sesuai Tampilan 5 -->
         <text x="50" y="235" font-size="9.5" fill="#64748b" font-weight="600" text-anchor="middle" letter-spacing="1">BELAKANG</text>

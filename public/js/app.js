@@ -15,6 +15,44 @@ const App = {
     // Dengarkan perubahan rute URL hash
     window.addEventListener('hashchange', () => this.handleRoute());
 
+    // Dukungan Instalasi PWA (beforeinstallprompt)
+    let deferredPrompt = null;
+    const installBtn = document.getElementById('btn-install-pwa');
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      if (installBtn) installBtn.style.display = 'block';
+    });
+
+    if (installBtn) {
+      installBtn.addEventListener('click', async () => {
+        if (deferredPrompt) {
+          deferredPrompt.prompt();
+          const { outcome } = await deferredPrompt.userChoice;
+          if (outcome === 'accepted') {
+            installBtn.style.display = 'none';
+          }
+          deferredPrompt = null;
+        } else {
+          alert('Untuk memasang PWA FitStreak:\n- Chrome/Edge di Desktop: Klik tombol "Install" pada address bar.\n- Android: Ketuk menu (titik tiga) lalu pilih "Tambahkan ke Layar Utama".');
+        }
+      });
+    }
+
+    // Indikator Status Jaringan Online / Offline
+    const statusElem = document.getElementById('network-status');
+    const updateNetworkStatus = () => {
+      if (!statusElem) return;
+      if (navigator.onLine) {
+        statusElem.innerHTML = `<span style="width: 8px; height: 8px; border-radius: 9999px; background: #22c55e; display: inline-block;"></span><span>Online</span>`;
+      } else {
+        statusElem.innerHTML = `<span style="width: 8px; height: 8px; border-radius: 9999px; background: #ef4444; display: inline-block;"></span><span style="color: #fca5a5;">Mode Offline (PWA)</span>`;
+      }
+    };
+    window.addEventListener('online', updateNetworkStatus);
+    window.addEventListener('offline', updateNetworkStatus);
+    updateNetworkStatus();
+
     // Tangani aksi logout
     document.addEventListener('click', (e) => {
       if (e.target && e.target.id === 'btn-logout') {
@@ -92,6 +130,9 @@ const App = {
       case '#/reminder':
         ReminderView.render(mainContainer);
         break;
+      case '#/profile':
+        ProfileView.render(mainContainer);
+        break;
       default:
         DashboardView.render(mainContainer);
         break;
@@ -114,6 +155,7 @@ const App = {
     else if (hash.includes('target')) currentSection = 'target';
     else if (hash.includes('history')) currentSection = 'history';
     else if (hash.includes('reminder')) currentSection = 'reminder';
+    else if (hash.includes('profile')) currentSection = 'profile';
 
     const activeSidebar = document.querySelector(`.sidebar-item[data-page="${currentSection}"]`);
     if (activeSidebar) activeSidebar.classList.add('active');

@@ -52,6 +52,26 @@ router.put('/', (req, res, next) => {
   }
 });
 
+// POST /api/profile/weight: Mencatat timbangan berat badan baru
+router.post('/weight', (req, res, next) => {
+  try {
+    const { weightKg, date } = req.body;
+    if (!weightKg || isNaN(weightKg)) {
+      return res.status(400).json({ error: 'Berat badan harus berupa angka valid' });
+    }
+    const { getLocalDateString } = require('../utils/time');
+    const loggedDate = date || getLocalDateString(new Date(), req.user.timeZone);
+    weightLogRepository.addLog({
+      userId: req.user.id,
+      weightKg: Number(weightKg),
+      loggedDate
+    });
+    res.json({ message: 'Berat badan berhasil dicatat', weightKg: Number(weightKg), loggedDate });
+  } catch (error) {
+    next(error);
+  }
+});
+
 // GET /api/profile/reminder: Mendapatkan preferensi pengingat & status evaluasi hari ini (BR-07)
 router.get('/reminder', (req, res) => {
   const goalRepository = require('../repositories/goalRepository');

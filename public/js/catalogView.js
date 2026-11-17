@@ -146,7 +146,12 @@ const CatalogView = {
         try {
           let routines = await API.getRoutines();
           let targetId;
-          if (routines.length > 0) {
+          if (routines.length > 1) {
+            const routineNames = routines.map((r, i) => `${i + 1}. ${r.name}`).join('\n');
+            const chosen = prompt(`Pilih rutinitas untuk "${name}":\n${routineNames}\n(Ketik nomor rutinitas 1-${routines.length})`, '1');
+            const idx = (parseInt(chosen, 10) || 1) - 1;
+            targetId = (routines[idx] || routines[0]).id;
+          } else if (routines.length === 1) {
             targetId = routines[0].id;
           } else {
             const newRoutine = await API.request('/api/routines', {

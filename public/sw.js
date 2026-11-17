@@ -2,7 +2,7 @@
 // Service Worker untuk Progressive Web App FitStreak (NFR-07)
 // Menyimpan berkas UI statis secara lokal untuk kehandalan offline
 
-const CACHE_NAME = 'fitstreak-cache-v4';
+const CACHE_NAME = 'fitstreak-cache-v5';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -21,6 +21,7 @@ const STATIC_ASSETS = [
   '/js/targetView.js',
   '/js/historyView.js',
   '/js/reminderView.js',
+  '/js/profileView.js',
   '/js/svgMuscle.js',
   '/icons/icon.svg'
 ];

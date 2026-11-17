@@ -98,6 +98,25 @@ const API = {
     return this.request('/api/auth/me');
   },
 
+  // Profil & Pengaturan Akun
+  async getProfile() {
+    return this.request('/api/profile');
+  },
+
+  async updateProfile(profileData) {
+    return this.request('/api/profile', {
+      method: 'PUT',
+      body: JSON.stringify(profileData)
+    });
+  },
+
+  async logWeight(weightKg, date) {
+    return this.request('/api/profile/weight', {
+      method: 'POST',
+      body: JSON.stringify({ weightKg, date })
+    });
+  },
+
   logout() {
     this.setToken(null);
     this.setUser(null);
@@ -120,9 +139,13 @@ const API = {
     return this.request('/api/checkins/status-today');
   },
 
-  // Riwayat Lengkap (Check-in, Nutrisi, Berat Badan)
-  async getHistory() {
-    return this.request('/api/checkins/history');
+  // Riwayat Lengkap (TUGAS_API_RIWAYAT.md: GET /api/history)
+  async getHistory(params = {}) {
+    const period = params.period || 30;
+    const type = (params.type || 'all').toLowerCase();
+    const page = params.page || 1;
+    const pageSize = params.pageSize || 8;
+    return this.request(`/api/history?period=${period}&type=${type}&page=${page}&pageSize=${pageSize}`);
   },
 
   // Pengingat Harian (BR-07)

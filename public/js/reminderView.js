@@ -115,6 +115,7 @@ const ReminderView = {
         .reminder-container {
           max-width: 1080px;
           margin: 0 auto;
+          padding-bottom: 120px;
           font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
         .reminder-top-nav {
@@ -182,6 +183,14 @@ const ReminderView = {
               <div style="flex: 1; min-width: 140px;">
                 <label for="rem-hour" style="display: block; font-size: 0.85rem; font-weight: 600; color: #374151; margin-bottom: 6px;">Jam pengingat</label>
                 <input type="time" id="rem-hour" value="19:00" style="width: 100%; box-sizing: border-box; padding: 11px 14px; border: 1.5px solid #d1d5db; border-radius: 8px; font-size: 0.95rem; color: #111827; background: #ffffff; outline: none;" />
+                <div style="display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap;">
+                  <button type="button" class="btn-preset-time" data-time="06:00" style="padding: 3px 8px; font-size: 0.78rem; border-radius: 4px; border: 1px solid #d1d5db; background: #ffffff; color: #374151; cursor: pointer;">06:00</button>
+                  <button type="button" class="btn-preset-time" data-time="07:00" style="padding: 3px 8px; font-size: 0.78rem; border-radius: 4px; border: 1px solid #d1d5db; background: #ffffff; color: #374151; cursor: pointer;">07:00</button>
+                  <button type="button" class="btn-preset-time" data-time="18:00" style="padding: 3px 8px; font-size: 0.78rem; border-radius: 4px; border: 1px solid #d1d5db; background: #ffffff; color: #374151; cursor: pointer;">18:00</button>
+                  <button type="button" class="btn-preset-time" data-time="19:00" style="padding: 3px 8px; font-size: 0.78rem; border-radius: 4px; border: 1.5px solid #2563eb; background: #eff6ff; color: #1d4ed8; font-weight: 700; cursor: pointer;">19:00</button>
+                  <button type="button" class="btn-preset-time" data-time="20:00" style="padding: 3px 8px; font-size: 0.78rem; border-radius: 4px; border: 1px solid #d1d5db; background: #ffffff; color: #374151; cursor: pointer;">20:00</button>
+                  <button type="button" class="btn-preset-time" data-time="21:00" style="padding: 3px 8px; font-size: 0.78rem; border-radius: 4px; border: 1px solid #d1d5db; background: #ffffff; color: #374151; cursor: pointer;">21:00</button>
+                </div>
               </div>
 
               <div style="flex: 1.4; min-width: 180px;">
@@ -374,6 +383,27 @@ const ReminderView = {
         previewTimeSpan.textContent = val;
       });
     }
+
+    // Pilihan Cepat Jam Pengingat
+    container.querySelectorAll('.btn-preset-time').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const timeVal = btn.getAttribute('data-time');
+        if (remHourInput) {
+          remHourInput.value = timeVal;
+          if (previewTimeSpan) previewTimeSpan.textContent = timeVal;
+        }
+        container.querySelectorAll('.btn-preset-time').forEach(b => {
+          b.style.border = '1px solid #d1d5db';
+          b.style.background = '#ffffff';
+          b.style.color = '#374151';
+          b.style.fontWeight = 'normal';
+        });
+        btn.style.border = '1.5px solid #2563eb';
+        btn.style.background = '#eff6ff';
+        btn.style.color = '#1d4ed8';
+        btn.style.fontWeight = '700';
+      });
+    });
 
     // 2. Toggle Aktifkan Pengingat
     const chkEnable = document.getElementById('chk-enable-reminder');

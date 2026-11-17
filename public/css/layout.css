@@ -4,7 +4,9 @@
 /* Kontainer Utama Aplikasi */
 .app-container {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
 }
 
 /* Sidebar Navigasi Kiri (Warna Hijau Gelap #12231b) */
@@ -16,9 +18,8 @@
   flex-direction: column;
   padding: 24px 16px;
   flex-shrink: 0;
-  position: sticky;
-  top: 0;
   height: 100vh;
+  overflow-y: auto;
 }
 
 .sidebar-logo {
@@ -88,10 +89,13 @@
 /* Area Konten Utama */
 .main-content {
   flex-grow: 1;
-  padding: 32px 40px;
+  height: 100vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 32px 40px 120px 40px;
   max-width: 1280px;
   margin: 0 auto;
-  overflow-y: auto;
+  width: 100%;
 }
 
 /* Header Halaman */
@@ -311,6 +315,12 @@ body.auth-mode .main-content {
 
 /* Responsivitas untuk Layar Tablet & Ponsel (360px - 768px) */
 @media (max-width: 900px) {
+  .app-container {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
   .sidebar {
     display: none;
   }
@@ -320,7 +330,10 @@ body.auth-mode .main-content {
   }
 
   .main-content {
-    padding: 20px 16px 80px 16px;
+    height: auto;
+    min-height: 100vh;
+    overflow-y: visible;
+    padding: 20px 16px 140px 16px;
   }
 
   .stats-grid,
